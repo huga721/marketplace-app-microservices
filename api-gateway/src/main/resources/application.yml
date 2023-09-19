@@ -11,16 +11,16 @@ spring:
         - id: product-service
           uri: lb://product-service
           predicates:
-          - Path=/products/**
+          - Path=/api/products/**
           filters:
-          - RewritePath=/products/(?<path>.*), /$\{path}
+          - RewritePath=/api/products/(?<path>.*), /$\{path}
 
         - id: basket-service
           uri: lb://basket-service
           predicates:
-          - Path=/baskets/**
+          - Path=/api/baskets/**
           filters:
-          - RewritePath=/baskets/(?<path>.*), /$\{path}
+          - RewritePath=/api/baskets/(?<path>.*), /$\{path}
 
         - id: openapi
           uri: http://localhost:8080
@@ -32,9 +32,9 @@ spring:
         - id: user-service
           uri: lb://user-service
           predicates:
-          - Path=/users/**
+          - Path=/api/users/**
           filters:
-            - RewritePath=/users/(?<path>.*), /$\{path}
+            - RewritePath=/api/users/(?<path>.*), /$\{path}
 
       discovery:
         locator:
@@ -50,8 +50,8 @@ springdoc:
   swagger-ui:
     urls:
       - name: products
-        url: /v3/api-docs/products
+        url: /v3/api-docs/api/products
       - name: baskets
-        url: /v3/api-docs/baskets
+        url: /v3/api-docs/api/baskets
       - name: users
-        url: /v3/api-docs/users
+        url: /v3/api-docs/api/users
