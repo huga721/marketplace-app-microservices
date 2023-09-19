@@ -24,9 +24,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable);
 
         http.authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/v3/api-docs")
-                .permitAll()
-                .requestMatchers("/api/**", "/api/register")
+                .requestMatchers("/**")
                 .permitAll());
 
         http.oauth2ResourceServer((resourceServer) -> resourceServer

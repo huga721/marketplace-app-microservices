@@ -14,7 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@EnableMethodSecurity
+@EnableMethodSecurity(jsr250Enabled = true)
 public class SecurityConfig {
 
     private final JwtAuthConverter jwtAuthConverter;
@@ -24,10 +24,8 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable);
 
         http.authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/api/login", "/api/register", "/v3/api-docs")
-                .permitAll()
-                .requestMatchers("/api/{userId}", "/api")
-                .authenticated());
+                .requestMatchers("/**")
+                .permitAll());
 
         http.oauth2ResourceServer((resourceServer) -> resourceServer
                 .jwt(jwtConfigurer -> jwtConfigurer
