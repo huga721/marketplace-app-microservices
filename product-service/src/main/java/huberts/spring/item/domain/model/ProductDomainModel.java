@@ -1,9 +1,7 @@
 package huberts.spring.item.domain.model;
 
 import huberts.spring.item.adapter.in.web.resource.ProductRequest;
-import huberts.spring.item.common.model.Color;
 import huberts.spring.item.common.model.Quality;
-import huberts.spring.item.common.model.Size;
 import huberts.spring.item.common.model.Status;
 import huberts.spring.item.common.exception.ProductStatusException;
 import lombok.AllArgsConstructor;
@@ -23,11 +21,10 @@ public class ProductDomainModel {
     private String name;
     private String description;
     private Long price;
-    private Color color;
     private Quality quality;
-    private Size size;
     private Status status;
     private LocalDateTime createdTime;
+    private String keycloakId;
 
     public boolean isActive() {
         return status.equals(Status.ACTIVE);
@@ -38,8 +35,7 @@ public class ProductDomainModel {
             throw new ProductStatusException("Status of item is inactive");
         }
         return new ProductDomainModel(id, productRequest.name(), productRequest.description(),
-                productRequest.price(), productRequest.color(), productRequest.quality(),
-                productRequest.size(), status, createdTime);
+                productRequest.price(), productRequest.quality(), status, createdTime, keycloakId);
     }
 
     public ProductDomainModel markInactive() {
@@ -56,8 +52,4 @@ public class ProductDomainModel {
         }
         return null;
     }
-
-//    public LocalDateTime calculateAddDate() {
-//        return LocalDateTime.now().minus(createdTime.);
-//    }
 }
