@@ -1,5 +1,6 @@
-package huberts.spring.authentication.common.exception;
+package huberts.spring.authentication.common.exception.handler;
 
+import huberts.spring.authentication.common.exception.UserDoesntExistException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
