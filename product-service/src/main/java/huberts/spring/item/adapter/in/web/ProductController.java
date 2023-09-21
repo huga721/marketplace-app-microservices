@@ -8,9 +8,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.security.RolesAllowed;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,29 +18,28 @@ import java.util.List;
 @Tag(name = "products", description = "Product operations")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api")
 public class ProductController {
-
-    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     private final ProductServicePort productServicePort;
 
-    @Operation(summary = "Create product")
+    @Operation(summary = "[USER] Create product")
     @RolesAllowed("role-user")
-    @PostMapping("/add")
+    @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    ProductDomainModel createProduct(@RequestBody ProductRequest productRequest) {
-        return productServicePort.createProduct(productRequest);
+    ProductDomainModel createProduct(@RequestBody ProductRequest productRequest,
+                                     @AuthenticationPrincipal Jwt jwt) {
+        String keycloakId = jwt.getSubject();
+        return productServicePort.createProduct(productRequest, keycloakId);
     }
 
-    @Operation(summary = "Get all available products")
+    @Operation(summary = "[USER] Get available products")
     @RolesAllowed("role-user")
-    @GetMapping("/get-all")
-    List<ProductDomainModel> getAllAvailableProducts() {
-        return productServicePort.getAllAvailableProducts();
+    @GetMapping()
+    List<ProductDomainModel> getAvailableProducts() {
+        return productServicePort.getAvailableProducts();
     }
 
-    @Operation(summary = "Get product by id")
+    @Operation(summary = "[USER] Get product by id")
     @RolesAllowed("role-user")
     @GetMapping("/{productId}")
     ProductDomainModel getProductById(@Parameter(description = "Id of the product")
@@ -48,9 +47,7 @@ public class ProductController {
         return productServicePort.getProductById(productId);
     }
 
-    // TODO: get item by category
-
-    @Operation(summary = "Edit product by id")
+    @Operation(summary = "[USER] Edit product by id")
     @RolesAllowed("role-user")
     @PutMapping("/edit/{productId}")
     ProductDomainModel editProductById(@Parameter(description = "Id of the product")
@@ -60,15 +57,7 @@ public class ProductController {
         return productServicePort.editProductById(productId, productRequest);
     }
 
-    @Operation(summary = "Mark product as inactive by id")
-    @RolesAllowed("role-user")
-    @PutMapping("/{productId}")
-    ProductDomainModel markProductInactive(@Parameter(description = "Id of the product")
-                                           @PathVariable Long productId) {
-        return null;
-    }
-
-    @Operation(summary = "Delete product by id")
+    @Operation(summary = "[USER] Delete product by id")
     @RolesAllowed("role-user")
     @DeleteMapping("/{productId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
