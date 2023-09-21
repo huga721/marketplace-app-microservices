@@ -7,13 +7,12 @@ import java.util.List;
 
 public interface ProductServicePort {
 
-    ProductDomainModel createProduct(ProductRequest itemRequest);
+    ProductDomainModel createProduct(ProductRequest itemRequest, String keycloakId);
 
-    List<ProductDomainModel> getAllAvailableProducts();
+    List<ProductDomainModel> getAvailableProducts();
     ProductDomainModel getProductById(Long productId);
 
     ProductDomainModel editProductById(Long productId, ProductRequest productRequest);
-    ProductDomainModel markProductAsInactive(Long productId);
 
     void deleteProductById(Long productId);
 }

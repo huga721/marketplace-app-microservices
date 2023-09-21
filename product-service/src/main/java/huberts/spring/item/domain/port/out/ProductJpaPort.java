@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ProductJpaPort {
 
-    ProductDomainModel createProduct(ProductRequest itemRequest);
+    ProductDomainModel createProduct(ProductRequest productRequest, String keycloakId);
 
     List<ProductDomainModel> getAllProducts();
     ProductDomainModel getProductById(Long productId);

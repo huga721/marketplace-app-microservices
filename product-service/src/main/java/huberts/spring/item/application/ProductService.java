@@ -16,13 +16,12 @@ public class ProductService implements ProductServicePort {
     private final ProductJpaPort productJpaPort;
 
     @Override
-    public ProductDomainModel createProduct(ProductRequest productRequest) {
-        SecurityContext securityContext = SecurityContext.getContext();
-        return productJpaPort.createProduct(productRequest);
+    public ProductDomainModel createProduct(ProductRequest productRequest, String keycloakId) {
+        return productJpaPort.createProduct(productRequest, keycloakId);
     }
 
     @Override
-    public List<ProductDomainModel> getAllAvailableProducts() {
+    public List<ProductDomainModel> getAvailableProducts() {
         return productJpaPort.getAllProducts()
                 .stream()
                 .map(ProductDomainModel::returnActiveProduct)
@@ -39,11 +38,6 @@ public class ProductService implements ProductServicePort {
         ProductDomainModel productDomain = productJpaPort.getProductById(productId);
         productDomain.update(productRequest);
         return productDomain;
-    }
-
-    @Override
-    public ProductDomainModel markProductAsInactive(Long productId) {
-        return null;
     }
 
     @Override
