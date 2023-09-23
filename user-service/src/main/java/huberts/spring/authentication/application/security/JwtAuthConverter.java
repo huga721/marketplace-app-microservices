@@ -25,8 +25,6 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationToken> {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
-
     private final JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
 
     @Value("${jwt.auth.converter.principle-attribute}")
