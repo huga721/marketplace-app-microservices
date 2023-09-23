@@ -5,7 +5,7 @@ import huberts.spring.product.adapter.out.persistance.entity.ProductEntity;
 import huberts.spring.product.adapter.out.persistance.repository.ProductRepository;
 import huberts.spring.product.domain.model.ProductDomainModel;
 import huberts.spring.product.domain.port.out.ProductJpaPort;
-import huberts.spring.product.common.exception.ProductDoesntExistException;
+import huberts.spring.product.common.exception.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -43,8 +43,8 @@ public class ProductJpaAdapter implements ProductJpaPort {
         ProductEntity productEntity = productRepository.findById(productId)
                 .orElseThrow(() -> {
                     String errorMessage = String.format("Product with id = %s doesn't exist.", productId);
-                    log.warn("An exception occurred!", new ProductDoesntExistException(errorMessage));
-                    return new ProductDoesntExistException(errorMessage);
+                    log.warn("An exception occurred!", new ProductNotFoundException(errorMessage));
+                    return new ProductNotFoundException(errorMessage);
                 });
         return PRODUCT_JPA_MAPPER.toDomainModel(productEntity);
     }

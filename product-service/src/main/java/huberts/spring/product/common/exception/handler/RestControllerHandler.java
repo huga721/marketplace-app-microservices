@@ -1,6 +1,6 @@
 package huberts.spring.product.common.exception.handler;
 
-import huberts.spring.product.common.exception.ProductDoesntExistException;
+import huberts.spring.product.common.exception.ProductNotFoundException;
 import huberts.spring.product.common.exception.ProductStatusException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class RestControllerHandler {
 
-    @ExceptionHandler(value = ProductDoesntExistException.class)
+    @ExceptionHandler(value = ProductNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String productDoesntExistException(ProductDoesntExistException e) {
+    public String productNotFoundException(ProductNotFoundException e) {
         return e.getMessage();
     }
 
