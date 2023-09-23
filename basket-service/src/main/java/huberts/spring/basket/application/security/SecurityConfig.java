@@ -1,4 +1,4 @@
-package huberts.spring.item.application.security;
+package huberts.spring.basket.application.security;
 
 
 import lombok.RequiredArgsConstructor;
