@@ -15,5 +15,4 @@ public class ProductDomainModel {
     private Status status;
     private LocalDateTime createdTime;
     private String keycloakId;
-
 }
