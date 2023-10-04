@@ -3,7 +3,7 @@ package huberts.spring.authentication.adapter.out.persistance;
 import huberts.spring.authentication.adapter.in.web.resource.UserRequest;
 import huberts.spring.authentication.adapter.out.persistance.entity.UserEntity;
 import huberts.spring.authentication.adapter.out.persistance.repository.UserRepository;
-import huberts.spring.authentication.common.exception.UserDoesntExistException;
+import huberts.spring.authentication.application.exception.UserDoesntExistException;
 import huberts.spring.authentication.domain.model.UserDomainModel;
 import huberts.spring.authentication.domain.port.out.UserJpaPort;
 import lombok.RequiredArgsConstructor;

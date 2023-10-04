@@ -2,7 +2,7 @@ package huberts.spring.authentication.application;
 
 import huberts.spring.authentication.adapter.in.web.resource.UserRequest;
 import huberts.spring.authentication.adapter.out.keycloak.KeycloakService;
-import huberts.spring.authentication.common.exception.UserDoesntExistException;
+import huberts.spring.authentication.application.exception.UserDoesntExistException;
 import huberts.spring.authentication.domain.model.UserDomainModel;
 import huberts.spring.authentication.domain.port.in.UserServicePort;
 import huberts.spring.authentication.domain.port.out.UserJpaPort;
