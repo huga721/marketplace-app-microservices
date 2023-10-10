@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface BasketJpaPort {
     BasketDomainModel saveBasket(BasketDomainModel basketDomainModel);
-    BasketDomainModel findBasket(String keycloakId, Status status);
-
+    BasketDomainModel findBasketByKeycloakIdAndStatus(String keycloakId, Status status);
+    BasketDomainModel findBasketById(Long basketId);
     List<BasketDomainModel> getAllBaskets();
 }
