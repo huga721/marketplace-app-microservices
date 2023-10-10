@@ -16,6 +16,19 @@ spring:
       ddl-auto: create-drop
     show-sql: true
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8181/realms/marketplace-app-realm
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+
+  main:
+    allow-bean-definition-overriding: true
+
+  kafka:
+    bootstrap-servers: localhost:9092
+
 eureka:
   client:
     service-url:
@@ -23,3 +36,9 @@ eureka:
 server:
   port: 0
   forward-headers-strategy: framework
+
+jwt:
+  auth:
+    converter:
+      principle-attribute: "preferred_username"
+      resource-id: "marketplace-app"
