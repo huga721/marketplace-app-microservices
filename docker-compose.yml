@@ -64,6 +64,38 @@ services:
       - postgres
     restart: unless-stopped
 
+  postgres-order:
+    container_name: postgres-order
+    image: postgres
+    environment:
+      POSTGRES_USER: admin-order
+      POSTGRES_PASSWORD: admin-order
+      PGDATA: /data/postgres
+      PGPORT: 5436
+    volumes:
+      - postgres-order:/data/postgres
+    ports:
+      - "5436:5436"
+    networks:
+      - postgres
+    restart: unless-stopped
+
+  postgres-notification:
+    container_name: postgres-notification
+    image: postgres
+    environment:
+      POSTGRES_USER: admin-notification
+      POSTGRES-PASSWORD: admin-notification
+      PGDATA: /data/postgres
+      PGPORT: 5437
+    volumes:
+      - postgres-notification:/data/postgres
+    ports:
+      - "5347:5437"
+    networks:
+      - postgres
+    restart: unless-stopped
+
   pgadmin:
     container_name: pgadmin
     image: dpage/pgadmin4
@@ -82,21 +114,57 @@ services:
   keycloak:
     container_name: keycloak
     image: quay.io/keycloak/keycloak:22.0.1
-    command: [ "start-dev" ]
+    command:
+      - start-dev
+      - -Dkeycloak.migration.action=import
+      - -Dkeycloak.migration.provider=singleFile
+      - -Dkeycloak.migration.realmName=marketplace-app-realm
+      - -Dkeycloak.migration.file=/tmp/export/marketplace-realm.json
     environment:
-      DB_VENDOR: POSTGRES
-      DB_ADDR: postgres-keycloak
-      DB_DATABASE: keycloak
-      DB_USER: admin-keycloak
-      DB_PASSWORD: admin-keycloak
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_HTTP_ENABLED: true
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres-keycloak:5434/keycloak
+      KC_DB_USERNAME: admin-keycloak
+      KC_DB_PASSWORD: admin-password
     volumes:
-      - ./realms:/opt/keycloak/data/import/
+      - ./keycloak/marketplace-realm.json:/tmp/export/marketplace-realm.json
     ports:
       - "8181:8080"
     depends_on:
       - postgres-keycloak
+    networks:
+      - postgres
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  broker:
+    image: confluentinc/cp-kafka:7.0.1
+    container_name: broker
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://broker:29092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
 
 networks:
   postgres:
@@ -107,4 +175,6 @@ volumes:
   postgres-basket:
   postgres-keycloak:
   postgres-user:
+  postgres-order:
+  postgres-notification:
   pgadmin:
