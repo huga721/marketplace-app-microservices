@@ -1,10 +1,11 @@
 --liquibase formatted sql
 
---changeset authentication-service:creating-users-schema
+--changeset user-service:creating-users-schema
+DROP TABLE IF EXISTS users;
+
 CREATE TABLE users
 (
-    id          serial          NOT NULL    PRIMARY KEY,
-    role_id     bigint          DEFAULT NULL,
+    id          bigserial     NOT NULL    PRIMARY KEY,
     username    varchar(255)    DEFAULT NULL,
     keycloak_id    varchar(255)    DEFAULT NULL,
     first_name   varchar(255)    DEFAULT NULL,
