@@ -17,7 +17,7 @@ spring:
         format_sql: 'true'
         dialect: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none
     show-sql: true
 
   security:
@@ -26,6 +26,10 @@ spring:
         jwt:
           issuer-uri: http://localhost:8181/realms/marketplace-app-realm
           jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+
+  liquibase:
+    change-log: changelog.xml
+    enabled: true
 
 eureka:
   client:
