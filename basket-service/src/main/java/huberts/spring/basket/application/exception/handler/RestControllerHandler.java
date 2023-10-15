@@ -1,6 +1,5 @@
 package huberts.spring.basket.application.exception.handler;
 
-import feign.FeignException;
 import huberts.spring.basket.application.exception.BasketNotFoundException;
 import huberts.spring.basket.application.exception.FeignAuthorizationException;
 import huberts.spring.basket.application.exception.ProductInBasketException;
