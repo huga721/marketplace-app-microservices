@@ -1,7 +1,5 @@
 package huberts.spring.product.adapter.out.persistance.entity;
 
-import huberts.spring.product.common.model.Quality;
-import huberts.spring.product.common.model.Status;
 import jakarta.persistence.*;
 import lombok.*;
 

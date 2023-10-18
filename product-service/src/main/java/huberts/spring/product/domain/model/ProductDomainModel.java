@@ -1,9 +1,7 @@
 package huberts.spring.product.domain.model;
 
 import huberts.spring.product.adapter.in.web.resource.ProductRequest;
-import huberts.spring.product.common.model.Quality;
-import huberts.spring.product.common.model.Status;
-import huberts.spring.product.common.exception.ProductStatusException;
+import huberts.spring.product.application.exception.ProductStatusException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +19,7 @@ public class ProductDomainModel {
     private String name;
     private String description;
     private Long price;
-    private Quality quality;
+    private String quality;
     private Status status;
     private LocalDateTime createdTime;
     private String keycloakId;
@@ -35,7 +33,7 @@ public class ProductDomainModel {
             throw new ProductStatusException("Status of item is inactive");
         }
         return new ProductDomainModel(id, productRequest.name(), productRequest.description(),
-                productRequest.price(), productRequest.quality(), status, createdTime, keycloakId);
+                productRequest.price(), productRequest.quality().toString(), status, createdTime, keycloakId);
     }
 
     public ProductDomainModel markInactive() {
