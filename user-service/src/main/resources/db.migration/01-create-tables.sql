@@ -1,8 +1,6 @@
 --liquibase formatted sql
 
 --changeset user-service:creating-users-schema
-DROP TABLE IF EXISTS users;
-
 CREATE TABLE users
 (
     id          bigserial     NOT NULL    PRIMARY KEY,
