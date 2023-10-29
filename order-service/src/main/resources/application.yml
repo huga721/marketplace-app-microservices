@@ -1,0 +1,45 @@
+server:
+  port: 0
+  forward-headers-strategy: framework
+
+spring:
+  application:
+    name: order-service
+
+  datasource:
+    username: 'admin-order'
+    password: 'admin-order'
+    url: jdbc:postgresql://localhost:5436/order
+
+  jpa:
+    properties:
+      hibernate:
+        format_sql: 'true'
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8181/realms/marketplace-app-realm
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+
+  kafka:
+    consumer:
+      auto-offset-reset: latest
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true
+
+jwt:
+  auth:
+    converter:
+      principle-attribute: "preferred_username"
+      resource-id: "marketplace-app"
