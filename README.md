@@ -4,7 +4,7 @@ Marketplace is a project written in a Microservices architecture. The idea of th
 # 🐳 How to run with Docker
 Not implemented yet, the project is currently in maintenance.
 
-### Access Application Swagger documentation at: ```127.0.0.1:8085/swagger-ui.html```
+### Access Application Swagger documentation at: ```127.0.0.1:8080/swagger-ui.html```
 
 # 💻 How to Run Locally
 Not implemented yet, the project is currently in maintenance.
@@ -27,3 +27,5 @@ The Forum App REST API is built on the following cutting-edge technologies:
 - OpenFeign
 - Spring Web MVC
 - Liquibase
+- Kafka
+- Testcontainers
