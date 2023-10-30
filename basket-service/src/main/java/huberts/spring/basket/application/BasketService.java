@@ -91,4 +91,11 @@ public class BasketService implements BasketServicePort {
         }
         return basket;
     }
+
+    @Override
+    public BasketDomainModel setBasketInactive(BasketDomainModel basketDomainModel) {
+        basketDomainModel.setInactiveStatus();
+        BasketDomainModel basketSaved = basketJpaPort.saveBasket(basketDomainModel);
+        return basketSaved;
+    }
 }

@@ -23,8 +23,6 @@ import static huberts.spring.basket.adapter.out.persistance.mapper.BasketProduct
 @RequiredArgsConstructor
 public class BasketProductJpaAdapter implements BasketProductJpaPort {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(BasketProductJpaMapper.class);
-
     private final BasketProductRepository basketProductRepository;
 
     @Override

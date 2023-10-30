@@ -15,42 +15,45 @@ import java.util.List;
 
 @Tag(name = "baskets", description = "Basket operations")
 @RestController
+@RequestMapping("/api/basket")
 @RequiredArgsConstructor
 public class BasketController {
 
     private final BasketServicePort basketServicePort;
 
-    @RolesAllowed("role-user")
-    @PostMapping("/products/{productId}")
-    @ResponseStatus(HttpStatus.CREATED)
-    BasketDomainModel addProductToBasket(@PathVariable Long productId,
-                                         @AuthenticationPrincipal Jwt jwt) {
-        String keycloakId = jwt.getSubject();
-        return basketServicePort.addProductToBasket(productId, keycloakId);
+    @GetMapping()
+    List<BasketDomainModel> getBaskets() {
+        List<BasketDomainModel> baskets = basketServicePort.getBaskets();
+        return baskets;
+    }
+
+    @GetMapping("/{basketId}")
+    BasketDomainModel getBasketById(@PathVariable Long basketId) {
+        BasketDomainModel basket = basketServicePort.getBasketById(basketId);
+        return basket;
+    }
+
+    @GetMapping("/products")
+    List<BasketProductDomainModel> getBasketProducts() {
+        List<BasketProductDomainModel> basketProducts = basketServicePort.getBasketProducts();
+        return basketProducts;
     }
 
     @RolesAllowed("role-user")
     @GetMapping("/details")
     BasketDomainModel getBasketDetails(@AuthenticationPrincipal Jwt jwt) {
         String keycloakId = jwt.getSubject();
-        return basketServicePort.getBasketDetails(keycloakId);
+        BasketDomainModel basket = basketServicePort.getBasketDetails(keycloakId);
+        return basket;
     }
 
     @RolesAllowed("role-user")
-    @GetMapping()
-    List<BasketDomainModel> getBaskets() {
-        return basketServicePort.getBaskets();
-    }
-
-    @RolesAllowed("role-user")
-    @GetMapping("/products")
-    List<BasketProductDomainModel> getBasketProducts() {
-        return basketServicePort.getBasketProducts();
-    }
-
-    @RolesAllowed("role-user")
-    @GetMapping("/{basketId}")
-    BasketDomainModel getBasketById(@PathVariable Long basketId) {
-        return basketServicePort.getBasketById(basketId);
+    @PostMapping("/product/{productId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    BasketDomainModel addProductToBasket(@PathVariable Long productId,
+                                         @AuthenticationPrincipal Jwt jwt) {
+        String keycloakId = jwt.getSubject();
+        BasketDomainModel basket = basketServicePort.addProductToBasket(productId, keycloakId);
+        return basket;
     }
 }

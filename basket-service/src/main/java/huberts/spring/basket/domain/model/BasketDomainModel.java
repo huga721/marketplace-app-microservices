@@ -3,17 +3,11 @@ package huberts.spring.basket.domain.model;
 import huberts.spring.basket.adapter.out.feign.product.model.ProductDomainModel;
 import huberts.spring.basket.adapter.out.feign.product.model.Status;
 import lombok.*;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j
-@Getter
-@Setter
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class BasketDomainModel {
 
     private Long id;
@@ -36,5 +30,9 @@ public class BasketDomainModel {
         Long productId = product.getId();
         return basketProducts.stream()
                 .anyMatch(products -> products.getProductId().equals(productId));
+    }
+
+    public void setInactiveStatus() {
+        status = Status.INACTIVE;
     }
 }

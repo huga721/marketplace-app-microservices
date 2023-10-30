@@ -15,4 +15,6 @@ public interface BasketServicePort {
     List<BasketProductDomainModel> getBasketProducts();
 
     BasketDomainModel getBasketDetails(String keycloakId);
+
+    BasketDomainModel setBasketInactive(BasketDomainModel basketDomainModel);
 }
