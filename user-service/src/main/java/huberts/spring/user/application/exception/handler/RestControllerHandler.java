@@ -1,6 +1,6 @@
 package huberts.spring.user.application.exception.handler;
 
-import huberts.spring.user.application.exception.UserDoesntExistException;
+import huberts.spring.user.application.exception.UserNotFoundException;
 import huberts.spring.user.application.exception.model.ExceptionMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,9 +12,9 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class RestControllerHandler {
 
-    @ExceptionHandler(value = UserDoesntExistException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionMessage userExistException(UserDoesntExistException e) {
+    @ExceptionHandler(value = UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ExceptionMessage userNotFound(UserNotFoundException e) {
         ExceptionMessage exceptionMessage = new ExceptionMessage();
         exceptionMessage.setTimestamp(LocalDateTime.now());
         exceptionMessage.setError(e.getMessage());
