@@ -1,6 +1,6 @@
 package huberts.spring.user.adapter.in.web.resource;
 
-public record UserRequest(
+public record CreateRequest(
         String username,
         String password,
         String firstName,
