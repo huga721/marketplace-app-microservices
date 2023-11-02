@@ -1,33 +1,30 @@
 package huberts.spring.user.adapter.in.web.unit;
 
-import huberts.spring.user.adapter.in.web.UserController;
-import huberts.spring.user.adapter.out.persistance.UserJpaAdapter;
-import huberts.spring.user.adapter.out.persistance.repository.UserRepository;
+import huberts.spring.user.adapter.in.web.resource.EditRequest;
 import huberts.spring.user.application.UserService;
 import huberts.spring.user.application.exception.UserNotFoundException;
 import huberts.spring.user.domain.model.UserDomainModel;
+import huberts.spring.user.domain.port.in.KeycloakServicePort;
 import huberts.spring.user.domain.port.in.UserServicePort;
 import huberts.spring.user.domain.port.out.UserJpaPort;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.from;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceUnitTest {
@@ -45,6 +42,8 @@ public class UserServiceUnitTest {
     private UserJpaPort userJpaPort;
     @Mock
     private UserServicePort userServicePort;
+    @Mock
+    private KeycloakServicePort keycloakServicePort;
 
     @InjectMocks
     private UserService userService;
@@ -91,26 +90,62 @@ public class UserServiceUnitTest {
                 .hasSize(users.size());
     }
 
-//    @Test
-//    void shouldReturnUserById() {
-//        Mockito.when(userJpaPort.getUserById(1L)).thenReturn(defaultUser);
-//
-//        UserDomainModel fromService = userService.getUserById(1L);
-//
-//        assertThat(fromService)
-//                .isNotNull()
-//                .isEqualTo(defaultUser);
-//    }
+    @Test
+    void shouldReturnUserById() {
+        Mockito.when(userJpaPort.getUserById(1L)).thenReturn(defaultUser);
+
+        UserDomainModel fromService = userService.getUserById(1L);
+
+        assertThat(fromService)
+                .isNotNull()
+                .isEqualTo(defaultUser);
+    }
 
     @Test
     void shouldThrowException_WhenUserIdNotExist() {
-//        UserDomainModel us = userService.getUserById(1L);
-//
-//        assertThat(us)
-//                .isNotNull();
-        Mockito.when(userJpaPort.getUserById(anyLong())).thenReturn(null);
-        Executable executable = () -> userService.getUserById(anyLong());
-        assertThrows(UserNotFoundException.class, executable);
+        when(userJpaPort.getUserById(anyLong())).thenThrow(new UserNotFoundException(""));
+        assertThrows(UserNotFoundException.class, () -> userService.getUserById(1L));
     }
 
+    @Test
+    void shouldEditUser() {
+        EditRequest editRequest = new EditRequest("edit", "first", "last", "foo@g.com");
+
+        when(userJpaPort.getUserByKeycloakId(anyString()))
+                .thenReturn(defaultUser);
+        doNothing().when(keycloakServicePort).updateUser(anyString(), any(EditRequest.class));
+
+
+        UserDomainModel fromService = userService.editUserByKeycloakId("123-123", editRequest);
+
+        assertEquals(fromService.getUsername(), editRequest.username());
+        assertEquals(fromService.getFirstName(), editRequest.firstName());
+        assertEquals(fromService.getLastName(), editRequest.lastName());
+        assertEquals(fromService.getEmail(), editRequest.email());
+    }
+
+    @Test
+    void shouldNotEditUser_WhenRequestFieldsAreEmpty() {
+        EditRequest editRequest = new EditRequest("", "", "", "");
+
+        when(userJpaPort.getUserByKeycloakId(anyString()))
+                .thenReturn(defaultUser);
+        doNothing().when(keycloakServicePort).updateUser(anyString(), any(EditRequest.class));
+
+        UserDomainModel fromService = userService.editUserByKeycloakId("123-123", editRequest);
+
+        assertEquals(fromService.getUsername(), defaultUser.getUsername());
+        assertEquals(fromService.getFirstName(), defaultUser.getFirstName());
+        assertEquals(fromService.getLastName(), defaultUser.getLastName());
+        assertEquals(fromService.getEmail(), defaultUser.getEmail());
+    }
+
+    @Test
+    void shouldThrowException_WhenUserNotFoundWithKeycloakId() {
+        EditRequest editRequest = new EditRequest("", "", "", "");
+        when(userJpaPort.getUserByKeycloakId(anyString()))
+                .thenThrow(new UserNotFoundException("Foo"));
+
+        assertThrows(UserNotFoundException.class, () -> userService.editUserByKeycloakId("123-123", editRequest));
+    }
 }

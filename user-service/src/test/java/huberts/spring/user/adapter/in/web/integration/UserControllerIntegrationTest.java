@@ -1,5 +1,8 @@
 package huberts.spring.user.adapter.in.web.integration;
 
+import com.c4_soft.springaddons.security.oauth2.test.annotations.WithJwt;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import huberts.spring.user.adapter.in.web.resource.EditRequest;
 import huberts.spring.user.adapter.out.persistance.entity.UserEntity;
 import huberts.spring.user.adapter.out.persistance.repository.UserRepository;
 import huberts.spring.user.application.exception.UserNotFoundException;
@@ -23,32 +26,60 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserControllerIntegrationTest extends ContainerIT {
 
     private static UserEntity defaultUser;
-    private final static Long ID = 1L;
-    private final static String USERNAME = "user";
-    private final static String KEYCLOAK_ID = "321321-dsasa-cdcsad-xasxas-hhhh";
-    private final static String FIRST_NAME = "Fredi";
-    private final static String SET_LAST_NAME = "Kamionka";
-    private final static String EMAIL = "user@gmail.com";
-    private final static String ROLE_NAME = "USER";
+    private static UserEntity userSavedWithRole;
+    private static UserEntity adminSavedWithRole;
+    private static UserEntity userToEdit;
 
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private UserRepository repository;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @BeforeAll
     public void init() {
         defaultUser = new UserEntity();
-        defaultUser.setId(ID);
-        defaultUser.setUsername(USERNAME);
-        defaultUser.setKeycloakId(KEYCLOAK_ID);
-        defaultUser.setFirstName(FIRST_NAME);
-        defaultUser.setLastName(SET_LAST_NAME);
-        defaultUser.setEmail(EMAIL);
-        defaultUser.setRoleName(ROLE_NAME);
+        defaultUser.setId(1L);
+        defaultUser.setUsername("user");
+        defaultUser.setKeycloakId("123-3213-32134");
+        defaultUser.setFirstName("Fredi");
+        defaultUser.setLastName("Kamionka");
+        defaultUser.setEmail("user@gmail.com");
+        defaultUser.setRoleName("USER");
+
+        userSavedWithRole = new UserEntity();
+        userSavedWithRole.setId(2L);
+        userSavedWithRole.setUsername("walt");
+        userSavedWithRole.setKeycloakId("cbe10031-5ab7-4ff6-b740-e9b001d93dd1");
+        userSavedWithRole.setFirstName("Walter");
+        userSavedWithRole.setLastName("White");
+        userSavedWithRole.setEmail("walt@gmail.com");
+        userSavedWithRole.setRoleName("USER");
+
+        adminSavedWithRole = new UserEntity();
+        adminSavedWithRole.setId(3L);
+        adminSavedWithRole.setUsername("moderator");
+        adminSavedWithRole.setKeycloakId("a25bf753-3e95-4c4b-8d71-3bff83ba4ab9");
+        adminSavedWithRole.setFirstName("Karol");
+        adminSavedWithRole.setLastName("Sztaba");
+        adminSavedWithRole.setEmail("ksfake@gmail.com");
+        adminSavedWithRole.setRoleName("ADMIN");
+
+        userToEdit = new UserEntity();
+        userToEdit.setId(4L);
+        userToEdit.setUsername("speedy");
+        userToEdit.setKeycloakId("ae885313-4d31-4682-8360-09456c7ac3d7");
+        userToEdit.setFirstName("Matheo");
+        userToEdit.setLastName("Erwin");
+        userToEdit.setEmail("mefake@gmail.com");
+        userToEdit.setRoleName("USER");
+
         repository.save(defaultUser);
         repository.save(defaultUser);
+        repository.save(userSavedWithRole);
+        repository.save(adminSavedWithRole);
+        repository.save(userToEdit);
     }
 
     @Test
@@ -126,8 +157,75 @@ public class UserControllerIntegrationTest extends ContainerIT {
         final String link = "/api/user/999";
 
         mockMvc.perform(MockMvcRequestBuilders
-                .get(link))
+                        .get(link))
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof UserNotFoundException));
+    }
+
+    @Test
+    @WithJwt("speedy.json")
+    void shouldEditUser_WithUserRole() throws Exception {
+        EditRequest editRequest = new EditRequest("Foo", "Boo", "Foo", "fake@fake.com");
+        String editRequestAsString = objectMapper.writeValueAsString(editRequest);
+
+        final String link = "/api/user";
+
+        mockMvc.perform(MockMvcRequestBuilders.patch(link)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(editRequestAsString))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value(editRequest.username()))
+                .andExpect(jsonPath("$.firstName").value(editRequest.firstName()))
+                .andExpect(jsonPath("$.lastName").value(editRequest.lastName()))
+                .andExpect(jsonPath("$.email").value(editRequest.email()))
+                .andExpect(jsonPath("$.keycloakId").value(userSavedWithRole.getKeycloakId()));
+    }
+
+    @Test
+    @WithJwt("admin-role.json")
+    void shouldEditUser_WithAdminRole() throws Exception {
+        EditRequest editRequest = new EditRequest("", "", "Foo", "");
+        String editRequestAsString = objectMapper.writeValueAsString(editRequest);
+
+        final String link = "/api/user";
+
+        mockMvc.perform(MockMvcRequestBuilders.patch(link)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(editRequestAsString))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.lastName").value(editRequest.lastName()))
+                .andExpect(jsonPath("$.keycloakId").value(adminSavedWithRole.getKeycloakId()));
+    }
+
+    @Test
+    void shouldNotEditUser_WithNoRole() throws Exception {
+        EditRequest editRequest = new EditRequest("Foo", "Boo", "Foo", "fake@fake.com");
+        String editRequestAsString = objectMapper.writeValueAsString(editRequest);
+
+        final String link = "/api/user";
+
+        mockMvc.perform(MockMvcRequestBuilders.patch(link)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(editRequestAsString))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithJwt("user-role.json")
+    void shouldNotEditUser_WhenFieldsOfRequestBodyAreEmpty() throws Exception {
+        EditRequest editRequest = new EditRequest("", "", "", "");
+        String editRequestAsString = objectMapper.writeValueAsString(editRequest);
+
+        final String link = "/api/user";
+
+        mockMvc.perform(MockMvcRequestBuilders.patch(link)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(editRequestAsString))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value(userSavedWithRole.getUsername()))
+                .andExpect(jsonPath("$.firstName").value(userSavedWithRole.getFirstName()))
+                .andExpect(jsonPath("$.lastName").value(userSavedWithRole.getLastName()))
+                .andExpect(jsonPath("$.email").value(userSavedWithRole.getEmail()))
+                .andExpect(jsonPath("$.keycloakId").value(userSavedWithRole.getKeycloakId()));
     }
 }

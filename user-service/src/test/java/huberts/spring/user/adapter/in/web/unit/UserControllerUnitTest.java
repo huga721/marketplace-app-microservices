@@ -1,6 +1,11 @@
 package huberts.spring.user.adapter.in.web.unit;
 
+import com.c4_soft.springaddons.security.oauth2.test.annotations.WithJwt;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import huberts.spring.user.adapter.in.web.UserController;
+import huberts.spring.user.adapter.in.web.resource.EditRequest;
+import huberts.spring.user.application.exception.UserNotFoundException;
 import huberts.spring.user.domain.model.UserDomainModel;
 import huberts.spring.user.domain.port.in.UserServicePort;
 import org.junit.jupiter.api.BeforeAll;
@@ -21,6 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -47,6 +55,8 @@ public class UserControllerUnitTest {
 
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @BeforeAll
     public static void init() {
@@ -94,5 +104,107 @@ public class UserControllerUnitTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(users.size())));
     }
+
+    @Test
+    void shouldReturnUserById() throws Exception {
+        Mockito.when(userServicePort.getUserById(1L))
+                .thenReturn(defaultUser);
+
+        final String link = "/api/user/1";
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get(link))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username", is(defaultUser.getUsername())));
+    }
+
+    @Test
+    void shouldThrowException_WhenUserIdNotFound() throws Exception {
+        Mockito.when(userServicePort.getUserById(anyLong()))
+                .thenThrow(new UserNotFoundException(""));
+
+        final String link = "/api/user/1";
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get(link))
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof UserNotFoundException));
+    }
+
+    @Test
+    @WithJwt("user-role.json")
+    void shouldEditUser_WithUserRole() throws Exception {
+        EditRequest editRequest = new EditRequest("newUser", "Foo", "Foo", "f@f.com");
+        String editRequestAsString = objectMapper.writeValueAsString(editRequest);
+
+        UserDomainModel userUpdated = new UserDomainModel();
+        userUpdated.setUsername(editRequest.username());
+        userUpdated.setFirstName(editRequest.firstName());
+        userUpdated.setLastName(editRequest.lastName());
+        userUpdated.setEmail(editRequest.email());
+
+        Mockito.when(userServicePort.editUserByKeycloakId(anyString(), any(EditRequest.class)))
+                .thenReturn(userUpdated);
+
+        final String link = "/api/user";
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .patch(link)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(editRequestAsString))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value(editRequest.username()))
+                .andExpect(jsonPath("$.firstName").value(editRequest.firstName()))
+                .andExpect(jsonPath("$.lastName").value(editRequest.lastName()))
+                .andExpect(jsonPath("$.email").value(editRequest.email()));
+    }
+
+    @Test
+    @WithJwt("admin-role.json")
+    void shouldEditUser_WithAdminRole() throws Exception {
+        EditRequest editRequest = new EditRequest("newUser", "Foo", "Foo", "f@f.com");
+        String editRequestAsString = objectMapper.writeValueAsString(editRequest);
+
+        UserDomainModel userUpdated = new UserDomainModel();
+        userUpdated.setUsername(editRequest.username());
+        userUpdated.setFirstName(editRequest.firstName());
+        userUpdated.setLastName(editRequest.lastName());
+        userUpdated.setEmail(editRequest.email());
+
+        Mockito.when(userServicePort.editUserByKeycloakId(anyString(), any(EditRequest.class)))
+                .thenReturn(userUpdated);
+
+        final String link = "/api/user";
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .patch(link)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(editRequestAsString))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value(editRequest.username()))
+                .andExpect(jsonPath("$.firstName").value(editRequest.firstName()))
+                .andExpect(jsonPath("$.lastName").value(editRequest.lastName()))
+                .andExpect(jsonPath("$.email").value(editRequest.email()));
+    }
+
+    @Test
+    void shouldNotEditUser_WithNoRole() throws Exception {
+        EditRequest editRequest = new EditRequest("newUser", "Foo", "Foo", "f@f.com");
+        String editRequestAsString = objectMapper.writeValueAsString(editRequest);
+
+        UserDomainModel userUpdated = new UserDomainModel();
+        userUpdated.setUsername(editRequest.username());
+        userUpdated.setFirstName(editRequest.firstName());
+        userUpdated.setLastName(editRequest.lastName());
+        userUpdated.setEmail(editRequest.email());
+
+        final String link = "/api/user";
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .patch(link)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(editRequestAsString))
+                .andExpect(status().isUnauthorized());
+    }
+
 
 }
