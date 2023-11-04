@@ -5,7 +5,6 @@ import huberts.spring.user.application.UserService;
 import huberts.spring.user.application.exception.UserNotFoundException;
 import huberts.spring.user.domain.model.UserDomainModel;
 import huberts.spring.user.domain.port.in.KeycloakServicePort;
-import huberts.spring.user.domain.port.in.UserServicePort;
 import huberts.spring.user.domain.port.out.UserJpaPort;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -19,12 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.from;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceUnitTest {
@@ -40,8 +37,6 @@ public class UserServiceUnitTest {
 
     @Mock
     private UserJpaPort userJpaPort;
-    @Mock
-    private UserServicePort userServicePort;
     @Mock
     private KeycloakServicePort keycloakServicePort;
 
@@ -130,6 +125,7 @@ public class UserServiceUnitTest {
 
         when(userJpaPort.getUserByKeycloakId(anyString()))
                 .thenReturn(defaultUser);
+
         doNothing().when(keycloakServicePort).updateUser(anyString(), any(EditRequest.class));
 
         UserDomainModel fromService = userService.editUserByKeycloakId("123-123", editRequest);
@@ -147,5 +143,25 @@ public class UserServiceUnitTest {
                 .thenThrow(new UserNotFoundException("Foo"));
 
         assertThrows(UserNotFoundException.class, () -> userService.editUserByKeycloakId("123-123", editRequest));
+    }
+
+    @Test
+    void shouldDeleteUser() {
+        when(userJpaPort.getUserByKeycloakId(anyString()))
+                .thenReturn(defaultUser);
+
+        doNothing().when(userJpaPort).deleteUser(any(UserDomainModel.class));
+
+        userService.deleteUserByKeycloakId("123-123");
+
+        verify(userJpaPort, times(1)).deleteUser(defaultUser);
+    }
+
+    @Test
+    void shouldThrowException_WhenUserNotExist() {
+        when(userJpaPort.getUserByKeycloakId(anyString()))
+                .thenThrow(new UserNotFoundException("Foo"));
+
+        assertThrows(UserNotFoundException.class, () -> userService.deleteUserByKeycloakId("123-123"));
     }
 }

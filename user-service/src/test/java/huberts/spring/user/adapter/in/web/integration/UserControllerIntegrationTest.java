@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -25,10 +26,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserControllerIntegrationTest extends ContainerIT {
 
-    private static UserEntity defaultUser;
-    private static UserEntity userSavedWithRole;
-    private static UserEntity adminSavedWithRole;
-    private static UserEntity userToEdit;
+    private static UserEntity userWalt;
+    private static UserEntity userAdmin;
+    private static UserEntity userSpeedy;
+    private static UserEntity userToDelete;
 
     @Autowired
     private MockMvc mockMvc;
@@ -39,47 +40,46 @@ public class UserControllerIntegrationTest extends ContainerIT {
 
     @BeforeAll
     public void init() {
-        defaultUser = new UserEntity();
-        defaultUser.setId(1L);
-        defaultUser.setUsername("user");
-        defaultUser.setKeycloakId("123-3213-32134");
-        defaultUser.setFirstName("Fredi");
-        defaultUser.setLastName("Kamionka");
-        defaultUser.setEmail("user@gmail.com");
-        defaultUser.setRoleName("USER");
+        userWalt = new UserEntity();
+        userWalt.setId(1L);
+        userWalt.setUsername("walt");
+        userWalt.setKeycloakId("cbe10031-5ab7-4ff6-b740-e9b001d93dd1");
+        userWalt.setFirstName("Walter");
+        userWalt.setLastName("White");
+        userWalt.setEmail("walt@gmail.com");
+        userWalt.setRoleName("USER");
 
-        userSavedWithRole = new UserEntity();
-        userSavedWithRole.setId(2L);
-        userSavedWithRole.setUsername("walt");
-        userSavedWithRole.setKeycloakId("cbe10031-5ab7-4ff6-b740-e9b001d93dd1");
-        userSavedWithRole.setFirstName("Walter");
-        userSavedWithRole.setLastName("White");
-        userSavedWithRole.setEmail("walt@gmail.com");
-        userSavedWithRole.setRoleName("USER");
+        userAdmin = new UserEntity();
+        userAdmin.setId(2L);
+        userAdmin.setUsername("moderator");
+        userAdmin.setKeycloakId("caedd3a9-062b-457b-94a1-b893f0b21b4e");
+        userAdmin.setFirstName("Karol");
+        userAdmin.setLastName("Sztaba");
+        userAdmin.setEmail("ksfake@gmail.com");
+        userAdmin.setRoleName("ADMIN");
 
-        adminSavedWithRole = new UserEntity();
-        adminSavedWithRole.setId(3L);
-        adminSavedWithRole.setUsername("moderator");
-        adminSavedWithRole.setKeycloakId("a25bf753-3e95-4c4b-8d71-3bff83ba4ab9");
-        adminSavedWithRole.setFirstName("Karol");
-        adminSavedWithRole.setLastName("Sztaba");
-        adminSavedWithRole.setEmail("ksfake@gmail.com");
-        adminSavedWithRole.setRoleName("ADMIN");
+        userSpeedy = new UserEntity();
+        userSpeedy.setId(3L);
+        userSpeedy.setUsername("speedy");
+        userSpeedy.setKeycloakId("e06919ed-dff5-4ca0-a0ad-ab0ca0a90a88");
+        userSpeedy.setFirstName("Matheo");
+        userSpeedy.setLastName("Erwin");
+        userSpeedy.setEmail("mefake@gmail.com");
+        userSpeedy.setRoleName("USER");
 
-        userToEdit = new UserEntity();
-        userToEdit.setId(4L);
-        userToEdit.setUsername("speedy");
-        userToEdit.setKeycloakId("ae885313-4d31-4682-8360-09456c7ac3d7");
-        userToEdit.setFirstName("Matheo");
-        userToEdit.setLastName("Erwin");
-        userToEdit.setEmail("mefake@gmail.com");
-        userToEdit.setRoleName("USER");
+        userToDelete = new UserEntity();
+        userToDelete.setId(4L);
+        userToDelete.setUsername("giver");
+        userToDelete.setKeycloakId("ae885313-4d31-4682-8360-09456c7ac312");
+        userToDelete.setFirstName("Fredi");
+        userToDelete.setLastName("Kamionka");
+        userToDelete.setEmail("fkfake@gmail.com");
+        userToDelete.setRoleName("USER");
 
-        repository.save(defaultUser);
-        repository.save(defaultUser);
-        repository.save(userSavedWithRole);
-        repository.save(adminSavedWithRole);
-        repository.save(userToEdit);
+        repository.save(userWalt);
+        repository.save(userAdmin);
+        repository.save(userSpeedy);
+        repository.save(userToDelete);
     }
 
     @Test
@@ -123,7 +123,7 @@ public class UserControllerIntegrationTest extends ContainerIT {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.username").value("user"));
+                .andExpect(jsonPath("$.username").value("walt"));
     }
 
     @Test
@@ -136,7 +136,7 @@ public class UserControllerIntegrationTest extends ContainerIT {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.username").value("user"));
+                .andExpect(jsonPath("$.username").value("walt"));
     }
 
     @Test
@@ -149,7 +149,7 @@ public class UserControllerIntegrationTest extends ContainerIT {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.username").value("user"));
+                .andExpect(jsonPath("$.username").value("walt"));
     }
 
     @Test
@@ -165,7 +165,7 @@ public class UserControllerIntegrationTest extends ContainerIT {
     @Test
     @WithJwt("speedy.json")
     void shouldEditUser_WithUserRole() throws Exception {
-        EditRequest editRequest = new EditRequest("Foo", "Boo", "Foo", "fake@fake.com");
+        EditRequest editRequest = new EditRequest("Foo1", "Boo", "Foo", "fake@fake.com");
         String editRequestAsString = objectMapper.writeValueAsString(editRequest);
 
         final String link = "/api/user";
@@ -178,13 +178,13 @@ public class UserControllerIntegrationTest extends ContainerIT {
                 .andExpect(jsonPath("$.firstName").value(editRequest.firstName()))
                 .andExpect(jsonPath("$.lastName").value(editRequest.lastName()))
                 .andExpect(jsonPath("$.email").value(editRequest.email()))
-                .andExpect(jsonPath("$.keycloakId").value(userSavedWithRole.getKeycloakId()));
+                .andExpect(jsonPath("$.keycloakId").value(userSpeedy.getKeycloakId()));
     }
 
     @Test
-    @WithJwt("admin-role.json")
+    @WithJwt("admin.json")
     void shouldEditUser_WithAdminRole() throws Exception {
-        EditRequest editRequest = new EditRequest("", "", "Foo", "");
+        EditRequest editRequest = new EditRequest("Foo", "Foo", "Foo", "f@f.com");
         String editRequestAsString = objectMapper.writeValueAsString(editRequest);
 
         final String link = "/api/user";
@@ -194,7 +194,7 @@ public class UserControllerIntegrationTest extends ContainerIT {
                         .content(editRequestAsString))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.lastName").value(editRequest.lastName()))
-                .andExpect(jsonPath("$.keycloakId").value(adminSavedWithRole.getKeycloakId()));
+                .andExpect(jsonPath("$.keycloakId").value(userAdmin.getKeycloakId()));
     }
 
     @Test
@@ -211,8 +211,8 @@ public class UserControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("user-role.json")
-    void shouldNotEditUser_WhenFieldsOfRequestBodyAreEmpty() throws Exception {
+    @WithJwt("walter.json")
+    void shouldThrowException_WhenFieldsOfRequestBodyAreEmpty() throws Exception {
         EditRequest editRequest = new EditRequest("", "", "", "");
         String editRequestAsString = objectMapper.writeValueAsString(editRequest);
 
@@ -221,11 +221,24 @@ public class UserControllerIntegrationTest extends ContainerIT {
         mockMvc.perform(MockMvcRequestBuilders.patch(link)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(editRequestAsString))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value(userSavedWithRole.getUsername()))
-                .andExpect(jsonPath("$.firstName").value(userSavedWithRole.getFirstName()))
-                .andExpect(jsonPath("$.lastName").value(userSavedWithRole.getLastName()))
-                .andExpect(jsonPath("$.email").value(userSavedWithRole.getEmail()))
-                .andExpect(jsonPath("$.keycloakId").value(userSavedWithRole.getKeycloakId()));
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException));
+    }
+
+    @Test
+    @WithJwt("userToDelete.json")
+    void shouldDeleteUser_WithUserRole() throws Exception {
+        final String link = "/api/user";
+
+         mockMvc.perform(MockMvcRequestBuilders.delete(link))
+                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void shouldDeleteUser_WithNoRole() throws Exception {
+        final String link = "/api/user";
+
+        mockMvc.perform(MockMvcRequestBuilders.delete(link))
+                .andExpect(status().isUnauthorized());
     }
 }

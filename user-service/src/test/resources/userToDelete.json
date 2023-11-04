@@ -1,13 +1,13 @@
 {
-  "exp": 1698935449,
-  "iat": 1698934249,
-  "jti": "a2563444-cc2c-44fd-85ea-436ea0c0b369",
+  "exp": 1698951810,
+  "iat": 1698950610,
+  "jti": "f2cab452-c58a-418b-868a-482e9077ff61",
   "iss": "http://localhost:8181/realms/marketplace-app-realm",
   "aud": "account",
-  "sub": "cbe10031-5ab7-4ff6-b740-e9b001d93dd1",
+  "sub": "ae885313-4d31-4682-8360-09456c7ac312",
   "typ": "Bearer",
   "azp": "marketplace-app",
-  "session_state": "1bdace30-cf8e-471d-b925-be7474f82e6e",
+  "session_state": "ae885313-4d31-4682-8360-09456c7ac3d7",
   "acr": "1",
   "allowed-origins": [
     "http://localhost:8080"
@@ -35,11 +35,11 @@
     }
   },
   "scope": "profile email",
-  "sid": "1bdace30-cf8e-471d-b925-be7474f82e6eee",
+  "sid": "ae885313-4d31-4682-8360-09456c7ac312",
   "email_verified": true,
-  "name": "Walter White",
-  "preferred_username": "walt",
-  "given_name": "Walter",
-  "family_name": "White",
-  "email": "walt@gmail.com"
+  "name": "Fredi Kamionka",
+  "preferred_username": "giver",
+  "given_name": "Fredi",
+  "family_name": "Kamionka",
+  "email": "fkfake@gmail.com"
 }

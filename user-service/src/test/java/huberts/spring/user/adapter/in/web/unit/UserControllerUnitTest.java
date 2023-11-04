@@ -1,7 +1,6 @@
 package huberts.spring.user.adapter.in.web.unit;
 
 import com.c4_soft.springaddons.security.oauth2.test.annotations.WithJwt;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import huberts.spring.user.adapter.in.web.UserController;
 import huberts.spring.user.adapter.in.web.resource.EditRequest;
@@ -17,7 +16,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -49,9 +47,6 @@ public class UserControllerUnitTest {
 
     @MockBean
     private UserServicePort userServicePort;
-
-    @MockBean
-    private JwtDecoder jwtDecoder;
 
     @Autowired
     private MockMvc mockMvc;
@@ -131,7 +126,7 @@ public class UserControllerUnitTest {
     }
 
     @Test
-    @WithJwt("user-role.json")
+    @WithJwt("walter.json")
     void shouldEditUser_WithUserRole() throws Exception {
         EditRequest editRequest = new EditRequest("newUser", "Foo", "Foo", "f@f.com");
         String editRequestAsString = objectMapper.writeValueAsString(editRequest);
@@ -159,7 +154,7 @@ public class UserControllerUnitTest {
     }
 
     @Test
-    @WithJwt("admin-role.json")
+    @WithJwt("admin.json")
     void shouldEditUser_WithAdminRole() throws Exception {
         EditRequest editRequest = new EditRequest("newUser", "Foo", "Foo", "f@f.com");
         String editRequestAsString = objectMapper.writeValueAsString(editRequest);
@@ -206,5 +201,20 @@ public class UserControllerUnitTest {
                 .andExpect(status().isUnauthorized());
     }
 
+    @Test
+    @WithJwt("walter.json")
+    void shouldDeleteUser_WithUserRole() throws Exception {
+        final String link = "/api/user";
 
+        mockMvc.perform(MockMvcRequestBuilders.delete(link))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void shouldNotDeleteUser_WithNoRole() throws Exception {
+        final String link = "/api/user";
+
+        mockMvc.perform(MockMvcRequestBuilders.delete(link))
+                .andExpect(status().isUnauthorized());
+    }
 }

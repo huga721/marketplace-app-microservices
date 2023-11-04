@@ -1,5 +1,6 @@
 package huberts.spring.user.adapter.in.web.integration;
 
+import dasniko.testcontainers.keycloak.KeycloakContainer;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -13,11 +14,18 @@ public class ContainerIT {
 
     @Container
     private static final PostgreSQLContainer<?> postgreSQLContainer;
+    @Container
+    private static final KeycloakContainer keycloakContainer;
 
     static {
         postgreSQLContainer = new PostgreSQLContainer<>("postgres")
                 .withReuse(true);
         postgreSQLContainer.start();
+        keycloakContainer = new KeycloakContainer("quay.io/keycloak/keycloak:22.0.1")
+                .withRealmImportFile("marketplace-realm.json")
+                .withAdminUsername("admin")
+                .withAdminPassword("password");
+        keycloakContainer.start();
     }
 
     @DynamicPropertySource
@@ -25,5 +33,9 @@ public class ContainerIT {
         registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
         registry.add("spring.datasource.username", postgreSQLContainer::getUsername);
         registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
+        registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri", () -> keycloakContainer.getAuthServerUrl() + "/realms/marketplace-app-realm");
+        registry.add("keycloak.server-url", keycloakContainer::getAuthServerUrl);
+        registry.add("keycloak.username", keycloakContainer::getAdminUsername);
+        registry.add("keycloak.password", keycloakContainer::getAdminPassword);
     }
 }
