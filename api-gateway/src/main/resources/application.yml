@@ -8,33 +8,32 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: product-service
-          uri: lb://product-service
-          predicates:
-          - Path=/api/products/**
-          filters:
-          - RewritePath=/api/products/(?<path>.*), /$\{path}
-
-        - id: basket-service
-          uri: lb://basket-service
-          predicates:
-          - Path=/api/baskets/**
-          filters:
-          - RewritePath=/api/baskets/(?<path>.*), /$\{path}
-
         - id: openapi
           uri: http://localhost:8080
           predicates:
           - Path=/v3/api-docs/**
           filters:
-          - RewritePath=/v3/api-docs/(?<path>.*), /$\{path}/v3/api-docs
+          - RewritePath=/v3/api-docs/(?<path>.*), /$\{path}
+
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+          - Path=/api/product/**
+
+        - id: basket-service
+          uri: lb://basket-service
+          predicates:
+          - Path=/api/basket/**
 
         - id: user-service
           uri: lb://user-service
           predicates:
-          - Path=/api/users/**
-          filters:
-            - RewritePath=/api/users/(?<path>.*), /$\{path}
+          - Path=/api/user/**
+
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/order/**
 
       discovery:
         locator:
@@ -49,9 +48,11 @@ eureka:
 springdoc:
   swagger-ui:
     urls:
-      - name: products
-        url: /v3/api-docs/api/products
-      - name: baskets
-        url: /v3/api-docs/api/baskets
-      - name: users
-        url: /v3/api-docs/api/users
+      - name: product
+        url: /product-service/v3/api-docs
+      - name: basket
+        url: /basket-service/v3/api-docs
+      - name: user
+        url: /user-service/v3/api-docs
+      - name: order
+        url: /order-service/v3/api-docs
