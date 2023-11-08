@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Bean;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 @Slf4j
 @SpringBootApplication
 public class ApiGatewayApplication {
@@ -24,23 +26,21 @@ public class ApiGatewayApplication {
 
     @Bean
     public List<GroupedOpenApi> apis() {
-        List<GroupedOpenApi> groups = new ArrayList<>();
         List<RouteDefinition> definitions = locator.getRouteDefinitions()
                 .collectList()
                 .block();
+
         assert definitions != null;
-        definitions.stream().filter(routeDefinition -> routeDefinition
-                .getId()
-                .matches(".*-service"))
-                .forEach(routeDefinition -> {
-                    String name = routeDefinition.getId()
-                            .replaceAll("-service", "");
-                    log.info(name);
-                    groups.add(GroupedOpenApi.builder()
-                            .pathsToMatch("/" + name + "/**").group(name).build());
-                    log.info(GroupedOpenApi.builder()
-                            .pathsToMatch("/" + name + "/**").group(name).build().getPathsToMatch().toString());
-                });
-        return groups;
+
+        return definitions.stream()
+                .filter(routeDefinition -> routeDefinition.getId().matches(".*-service"))
+                .map(routeDefinition -> {
+                    String name = routeDefinition.getId().replaceAll("-service", "");
+                    return GroupedOpenApi.builder()
+                            .pathsToMatch("/" + name + "/**")
+                            .group(name)
+                            .build();
+                })
+                .collect(toList());
     }
 }
