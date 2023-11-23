@@ -1,0 +1,47 @@
+{
+  "exp": 1698945657,
+  "iat": 1698944457,
+  "jti": "a25bf753-3e95-4c4b-8d71-3bff83ba4ab9",
+  "iss": "http://localhost:8181/realms/marketplace-app-realm",
+  "aud": "account",
+  "sub": "caedd3a9-062b-457b-94a1-b893f0b21b4e",
+  "typ": "Bearer",
+  "azp": "marketplace-app",
+  "session_state": "ffa45dc1-b07c-4088-9d9f-fe5e488808ca",
+  "acr": "1",
+  "allowed-origins": [
+    "http://localhost:8080"
+  ],
+  "realm_access": {
+    "roles": [
+      "offline_access",
+      "admin",
+      "uma_authorization",
+      "default-roles-marketplace-app-realm",
+      "user"
+    ]
+  },
+  "resource_access": {
+    "account": {
+      "roles": [
+        "manage-account",
+        "manage-account-links",
+        "view-profile"
+      ]
+    },
+    "marketplace-app": {
+      "roles": [
+        "role-user",
+        "role-admin"
+      ]
+    }
+  },
+  "scope": "profile email",
+  "sid": "ffa45dc1-b07c-4088-9d9f-fe5e488808ca",
+  "email_verified": true,
+  "name": "Karol Sztaba",
+  "preferred_username": "moderator",
+  "given_name": "Karol",
+  "family_name": "Sztaba",
+  "email": "ksfake@gmail.com"
+}

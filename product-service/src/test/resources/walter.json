@@ -1,0 +1,45 @@
+{
+  "exp": 1698935449,
+  "iat": 1698934249,
+  "jti": "a2563444-cc2c-44fd-85ea-436ea0c0b369",
+  "iss": "http://localhost:8181/realms/marketplace-app-realm",
+  "aud": "account",
+  "sub": "cbe10031-5ab7-4ff6-b740-e9b001d93dd1",
+  "typ": "Bearer",
+  "azp": "marketplace-app",
+  "session_state": "1bdace30-cf8e-471d-b925-be7474f82e6e",
+  "acr": "1",
+  "allowed-origins": [
+    "http://localhost:8080"
+  ],
+  "realm_access": {
+    "roles": [
+      "offline_access",
+      "uma_authorization",
+      "default-roles-marketplace-app-realm",
+      "user"
+    ]
+  },
+  "resource_access": {
+    "account": {
+      "roles": [
+        "manage-account",
+        "manage-account-links",
+        "view-profile"
+      ]
+    },
+    "marketplace-app": {
+      "roles": [
+        "role-user"
+      ]
+    }
+  },
+  "scope": "profile email",
+  "sid": "1bdace30-cf8e-471d-b925-be7474f82e6e",
+  "email_verified": true,
+  "name": "Walter White",
+  "preferred_username": "walt",
+  "given_name": "Walter",
+  "family_name": "White",
+  "email": "walt@gmail.com"
+}
