@@ -1,11 +1,14 @@
 package huberts.spring.user.adapter.in.web.unit;
 
+import huberts.spring.user.adapter.in.web.resource.CreateRequest;
 import huberts.spring.user.adapter.in.web.resource.EditRequest;
 import huberts.spring.user.application.UserService;
+import huberts.spring.user.application.exception.UserExistException;
 import huberts.spring.user.application.exception.UserNotFoundException;
 import huberts.spring.user.domain.model.UserDomainModel;
 import huberts.spring.user.domain.port.in.KeycloakServicePort;
 import huberts.spring.user.domain.port.out.UserJpaPort;
+import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,12 +17,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -163,5 +166,76 @@ public class UserServiceUnitTest {
                 .thenThrow(new UserNotFoundException("Foo"));
 
         assertThrows(UserNotFoundException.class, () -> userService.deleteUserByKeycloakId("123-123"));
+    }
+
+    @Test
+    void shouldCreateUser() {
+        CreateRequest createRequest = new CreateRequest("foo", "foo", "foo", "foo", "fo@fo.com");
+
+        Response response = Response.created(URI.create("/")).build();
+
+        when(keycloakServicePort.createUser(any(CreateRequest.class)))
+                .thenReturn(response);
+        when(userJpaPort.createUser(any(CreateRequest.class), anyString()))
+                .thenReturn(defaultUser);
+
+        UserDomainModel fromService = userService.createUser(createRequest);
+
+        assertNotNull(fromService);
+    }
+
+    @Test
+    void shouldNotCreateUser_WhenUsernameIsTaken() {
+        CreateRequest createRequest = new CreateRequest("foo", "foo", "foo", "foo", "fo@fo.com");
+
+        Response response = Response.status(202).build();
+
+        when(keycloakServicePort.createUser(any(CreateRequest.class)))
+                .thenReturn(response);
+
+        assertThrows(UserExistException.class, () -> userService.createUser(createRequest));
+    }
+
+    @Test
+    void shouldEditUserById() {
+        EditRequest editRequest = new EditRequest("test", "test", "test", "test@g.com");
+
+        when(userJpaPort.getUserById(anyLong()))
+                .thenReturn(defaultUser);
+
+        UserDomainModel fromService = userService.editUserById(1L, editRequest);
+
+        assertEquals(fromService.getUsername(), editRequest.username());
+        assertEquals(fromService.getUsername(), editRequest.firstName());
+        assertEquals(fromService.getLastName(), editRequest.lastName());
+        assertEquals(fromService.getEmail(), editRequest.email());
+    }
+
+    @Test
+    void shouldNotEditUser_WhenUserNotExist() {
+        EditRequest editRequest = new EditRequest("test", "test", "test", "test@g.com");
+
+        when(userJpaPort.getUserById(anyLong()))
+                .thenThrow(new UserNotFoundException("Foo"));
+
+        assertThrows(UserNotFoundException.class, () -> userService.editUserById(1L, editRequest));
+    }
+
+    @Test
+    void shouldDeleteUserById() {
+        when(userJpaPort.getUserById(anyLong()))
+                .thenReturn(defaultUser);
+
+        userService.deleteUserById(1L);
+
+        verify(userJpaPort, times(1)).deleteUser(defaultUser);
+    }
+
+    @Test
+    void shouldNotDeleteUser_WhenUserNotExist() {
+        when(userJpaPort.getUserById(anyLong()))
+                .thenThrow(new UserNotFoundException("Foo"));
+
+        assertThrows(UserNotFoundException.class, () -> userService.deleteUserById(1L));
     }
 }
