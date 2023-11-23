@@ -2,7 +2,7 @@ package huberts.spring.user.application;
 
 import huberts.spring.user.adapter.in.web.resource.CreateRequest;
 import huberts.spring.user.adapter.in.web.resource.EditRequest;
-import huberts.spring.user.application.exception.UserNotFoundException;
+import huberts.spring.user.application.exception.UserExistException;
 import huberts.spring.user.domain.model.UserDomainModel;
 import huberts.spring.user.domain.port.in.KeycloakServicePort;
 import huberts.spring.user.domain.port.in.UserServicePort;
@@ -56,18 +56,19 @@ public class UserService implements UserServicePort {
         LOGGER.info("UserService: creating user with create request {}", createRequest);
 
         Response keycloakRegisterResponse = keycloakServicePort.createUser(createRequest);
-        String keycloakId = CreatedResponseUtil.getCreatedId(keycloakRegisterResponse);
 
         LOGGER.info("UserService: response from keycloak {}", keycloakRegisterResponse.getStatus());
 
         if (keycloakRegisterResponse.getStatus() == 201) {
+            String keycloakId = CreatedResponseUtil.getCreatedId(keycloakRegisterResponse);
+
             LOGGER.info("UserService: keycloak status 201, creating user");
             return userJpaPort.createUser(createRequest, keycloakId);
         }
 
         String errorMessage = String.format("User with username = %s already exist", createRequest.username());
-        LOGGER.warn("An exception occurred!", new UserNotFoundException(errorMessage));
-        throw new UserNotFoundException(errorMessage);
+        LOGGER.warn("An exception occurred!", new UserExistException(errorMessage));
+        throw new UserExistException(errorMessage);
     }
 
 
