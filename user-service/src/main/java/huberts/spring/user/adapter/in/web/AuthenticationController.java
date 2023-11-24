@@ -29,13 +29,13 @@ public class AuthenticationController {
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     UserDomainModel createUser(@Valid @RequestBody CreateRequest createRequest) {
-        LOGGER.info("AuthenticationController call: creating  user {}", createRequest);
+        LOGGER.info(">> AuthenticationController call: creating  user {}", createRequest);
         return userServicePort.createUser(createRequest);
     }
 
     @PostMapping("/login")
     AccessTokenResponse getToken(@Valid @RequestBody LoginRequest loginRequest) {
-        LOGGER.info("AuthenticationController call: getting token {}", loginRequest);
+        LOGGER.info(">> AuthenticationController call: getting token {}", loginRequest);
         return keycloakServicePort.getToken(loginRequest);
     }
 }

@@ -29,20 +29,20 @@ public class UserController {
 
     @GetMapping
     List<UserDomainModel> getAllUsers() {
-        LOGGER.info("UserController call: receiving all users");
+        LOGGER.info(">> UserController call: getting all users");
         return userServicePort.getAllUsers();
     }
 
     @GetMapping("/{userId}")
     UserDomainModel getUserById(@PathVariable Long userId) {
-        LOGGER.info("UserController call: receiving user with id {}", userId);
+        LOGGER.info(">> UserController call: receiving user with id {}", userId);
         return userServicePort.getUserById(userId);
     }
 
     @PatchMapping()
     @RolesAllowed("role-user")
     UserDomainModel editUser(@AuthenticationPrincipal Jwt jwt, @Valid @RequestBody EditRequest editRequest) {
-        LOGGER.info("UserController call: editing authenticated user {}", editRequest);
+        LOGGER.info(">> UserController call: editing authenticated user {}", editRequest);
         String keycloakId = jwt.getSubject();
         return userServicePort.editUserByKeycloakId(keycloakId, editRequest);
     }
@@ -51,7 +51,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RolesAllowed("role-user")
     void deleteUser(@AuthenticationPrincipal Jwt jwt) {
-        LOGGER.info("UserController call: deleting user");
+        LOGGER.info(">> UserController call: deleting user");
         String keycloakId = jwt.getSubject();
         userServicePort.deleteUserByKeycloakId(keycloakId);
     }

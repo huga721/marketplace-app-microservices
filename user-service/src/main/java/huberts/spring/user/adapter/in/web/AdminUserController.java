@@ -26,7 +26,7 @@ public class AdminUserController {
     @PatchMapping("/{userId}")
     @RolesAllowed("role-admin")
     UserDomainModel editUserById(@PathVariable Long userId, @Valid @RequestBody EditRequest editRequest) {
-        LOGGER.info("AdminUserController call: editing user with id {}, request body: {}", userId, editRequest);
+        LOGGER.info(">> AdminUserController call: editing user with id {}, request body: {}", userId, editRequest);
         return userServicePort.editUserById(userId, editRequest);
     }
 
@@ -34,7 +34,7 @@ public class AdminUserController {
     @RolesAllowed("role-admin")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void deleteUserById(@PathVariable Long userId) {
-        LOGGER.info("AdminUserController call: deleting user with id {}", userId);
+        LOGGER.info(">> AdminUserController call: deleting user with id {}", userId);
         userServicePort.deleteUserById(userId);
     }
 }
