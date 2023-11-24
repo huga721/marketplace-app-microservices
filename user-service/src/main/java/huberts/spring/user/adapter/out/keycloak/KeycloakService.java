@@ -1,7 +1,9 @@
 package huberts.spring.user.adapter.out.keycloak;
 
+import huberts.spring.user.adapter.in.web.resource.EditRequest;
 import huberts.spring.user.adapter.in.web.resource.LoginRequest;
-import huberts.spring.user.adapter.in.web.resource.UserRequest;
+import huberts.spring.user.adapter.in.web.resource.CreateRequest;
+import huberts.spring.user.application.exception.UserExistException;
 import huberts.spring.user.domain.port.in.KeycloakServicePort;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -30,24 +33,34 @@ public class KeycloakService implements KeycloakServicePort {
 
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    private final static String SERVER_URL = "http://localhost:8181";
-    private final static String REALM = "marketplace-app-realm";
-    private final static String CLIENT_ID = "marketplace-app";
-    private final static String CLIENT_SECRET = "TehmCIP2NYurYk1J2d8XfszkNYc9ujZg";
+    @Value("${keycloak.server-url}")
+    private String SERVER_URL;
+    @Value("${keycloak.realm}")
+    private String REALM;
+    @Value("${keycloak.client-id}")
+    private String CLIENT_ID;
+    @Value("${keycloak.client-secret}")
+    private String CLIENT_SECRET;
 
     private final Keycloak keycloak;
 
     @Override
-    public Response createUser(UserRequest userRequest) {
-        LOGGER.info("[KeycloakService] createUser {}", userRequest);
-        UserRepresentation userRepresentation = buildUserRepresentation(userRequest);
-        CredentialRepresentation credentialRepresentation = buildCredentialRepresentation(userRequest.password());
+    public Response createUser(CreateRequest createRequest) {
+        LOGGER.info(">> KeycloakService: request for creating user: {}", createRequest);
+
+        UserRepresentation userRepresentation = buildUserRepresentation(createRequest);
+        CredentialRepresentation credentialRepresentation = buildCredentialRepresentation(createRequest.password());
 
         userRepresentation.setCredentials(Collections.singletonList(credentialRepresentation));
 
         UsersResource userResource = keycloak.realm(REALM).users();
 
         Response response = userResource.create(userRepresentation);
+
+        if (response.getStatus() == 409) {
+            LOGGER.warn("Creating user in KeycloakService interrupted. User already exist.");
+            throw new UserExistException("User already exist.");
+        }
 
         String userId = CreatedResponseUtil.getCreatedId(response);
 
@@ -60,7 +73,7 @@ public class KeycloakService implements KeycloakServicePort {
         return response;
     }
 
-    private UserRepresentation buildUserRepresentation(UserRequest userRequest) {
+    private UserRepresentation buildUserRepresentation(CreateRequest userRequest) {
         UserRepresentation userRepresentation = new UserRepresentation();
 
         userRepresentation.setUsername(userRequest.username());
@@ -87,22 +100,39 @@ public class KeycloakService implements KeycloakServicePort {
 
     @Override
     public AccessTokenResponse getToken(LoginRequest loginRequest) {
-        LOGGER.info("[KeycloakService] getToken {}", loginRequest);
+        LOGGER.info(">> KeycloakService: getting token by: {}", loginRequest);
         Keycloak keycloakClient = buildKeycloakClient(loginRequest);
+
         return keycloakClient.tokenManager().getAccessToken();
     }
 
     @Override
-    public void updateUser(String keycloakId, UserRequest userRequest) {
+    public void updateUser(String keycloakId, EditRequest editRequest) {
+        LOGGER.info(">> KeycloakService: updating: {} user with keycloak id: {}", editRequest, keycloakId);
+
         RealmResource realmResource = keycloak.realm(REALM);
         UsersResource usersResource = realmResource.users();
         UserResource userResource = usersResource.get(keycloakId);
 
-        UserRepresentation userRepresentation = buildUserRepresentation(userRequest);
-        userResource.update(userRepresentation);
+        UserRepresentation userRepresentation = userResource.toRepresentation();
+        userRepresentation.setUsername(editRequest.username());
+        userRepresentation.setFirstName(editRequest.firstName());
+        userRepresentation.setLastName(editRequest.lastName());
+        userRepresentation.setEmail(editRequest.email());
 
-        CredentialRepresentation credential = buildCredentialRepresentation(userRequest.password());
-        userResource.resetPassword(credential);
+        userResource.update(userRepresentation);
+    }
+
+    @Override
+    public void deleteUser(String keycloakId) {
+        LOGGER.info(">> KeycloakService: deleting user with keycloak id: {}", keycloakId);
+
+        RealmResource realmResource = keycloak.realm(REALM);
+
+        UsersResource usersResource = realmResource.users();
+        UserResource userResource = usersResource.get(keycloakId);
+
+        userResource.remove();
     }
 
     private Keycloak buildKeycloakClient(LoginRequest loginRequest) {
