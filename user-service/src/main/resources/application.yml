@@ -41,7 +41,11 @@ eureka:
 
 keycloak:
   realm: marketplace-app-realm
-  auth-server-url: http://localhost:8181
+  server-url: http://localhost:8181
+  username: admin
+  password: password
+  client-id: marketplace-app
+  client-secret: TehmCIP2NYurYk1J2d8XfszkNYc9ujZg
   ssl-required: external
   resource:
 
