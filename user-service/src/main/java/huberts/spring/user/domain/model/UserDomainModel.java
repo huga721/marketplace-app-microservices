@@ -1,12 +1,13 @@
 package huberts.spring.user.domain.model;
 
-import huberts.spring.user.adapter.in.web.resource.UserRequest;
+import huberts.spring.user.adapter.in.web.resource.EditRequest;
 import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@Data
 public class UserDomainModel {
 
     private Long id;
@@ -17,10 +18,18 @@ public class UserDomainModel {
     private String email;
     private String roleName;
 
-    public void updateUser(UserRequest userRequest) {
-        username = userRequest.username();
-        firstName = userRequest.firstName();
-        lastName = userRequest.lastName();
-        email = userRequest.email();
+    public void updateUser(EditRequest request) {
+        if (!request.username().isEmpty()) {
+            username = request.username();
+        }
+        if (!request.firstName().isEmpty()) {
+            firstName = request.firstName();
+        }
+        if (!request.lastName().isEmpty()) {
+            lastName = request.lastName();
+        }
+        if (!request.email().isEmpty()) {
+            email = request.email();
+        }
     }
 }
