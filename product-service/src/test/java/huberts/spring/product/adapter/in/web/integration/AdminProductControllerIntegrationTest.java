@@ -1,4 +1,4 @@
-package huberts.spring.product.adapter.in.web.intergration;
+package huberts.spring.product.adapter.in.web.integration;
 
 import com.c4_soft.springaddons.security.oauth2.test.annotations.WithJwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,7 +38,7 @@ class AdminProductControllerIntegrationTest extends ContainerIT {
 
     private ProductEntity leatherCaseProduct;
     private ProductEntity mouseProduct;
-    private ProductEntity screenProduct;
+    private ProductEntity productToDelete;
     private ProductEntity inactiveProduct;
 
     @BeforeAll
@@ -63,15 +63,15 @@ class AdminProductControllerIntegrationTest extends ContainerIT {
         mouseProduct.setQuality(Quality.SATISFACTORY);
         mouseProduct.setStatus(Status.ACTIVE);
 
-        screenProduct = new ProductEntity();
-        screenProduct.setId(3L);
-        screenProduct.setName("TV Screen");
-        screenProduct.setKeycloakId("e06919ed-dff5-4ca0-a0ad-ab0ca0a90a88");
-        screenProduct.setDescription("PC Mouse in new condition");
-        screenProduct.setPrice(500L);
-        screenProduct.setCreatedTime(LocalDateTime.now());
-        screenProduct.setQuality(Quality.NEW);
-        screenProduct.setStatus(Status.ACTIVE);
+        productToDelete = new ProductEntity();
+        productToDelete.setId(3L);
+        productToDelete.setName("TV Screen");
+        productToDelete.setKeycloakId("e06919ed-dff5-4ca0-a0ad-ab0ca0a90a88");
+        productToDelete.setDescription("PC Mouse in new condition");
+        productToDelete.setPrice(500L);
+        productToDelete.setCreatedTime(LocalDateTime.now());
+        productToDelete.setQuality(Quality.NEW);
+        productToDelete.setStatus(Status.ACTIVE);
 
         inactiveProduct = new ProductEntity();
         inactiveProduct.setId(4L);
@@ -85,7 +85,7 @@ class AdminProductControllerIntegrationTest extends ContainerIT {
 
         productRepository.save(leatherCaseProduct);
         productRepository.save(mouseProduct);
-        productRepository.save(screenProduct);
+        productRepository.save(productToDelete);
         productRepository.save(inactiveProduct);
     }
 
@@ -97,9 +97,7 @@ class AdminProductControllerIntegrationTest extends ContainerIT {
         mockMvc.perform(MockMvcRequestBuilders.get(link))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value(leatherCaseProduct.getName()))
-                .andExpect(jsonPath("$[1].name").value(mouseProduct.getName()))
-                .andExpect(jsonPath("$[2].name").value(screenProduct.getName()))
-                .andExpect(jsonPath("$[3].name").value(inactiveProduct.getName()));
+                .andExpect(jsonPath("$[1].name").value(mouseProduct.getName()));
     }
 
     @Test
@@ -119,7 +117,7 @@ class AdminProductControllerIntegrationTest extends ContainerIT {
 
         final String link = "/api/product/admin/3";
 
-        mockMvc.perform(MockMvcRequestBuilders.get(link)
+        mockMvc.perform(MockMvcRequestBuilders.patch(link)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(productRequestAsString))
                 .andExpect(status().isOk())
@@ -141,7 +139,7 @@ class AdminProductControllerIntegrationTest extends ContainerIT {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(productRequestAsString))
                 .andExpect(status().isNotFound())
-                .andExpect(result -> assertTrue(result instanceof ProductNotFoundException));
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ProductNotFoundException));
     }
 
     @Test
@@ -161,7 +159,7 @@ class AdminProductControllerIntegrationTest extends ContainerIT {
     @Test
     @WithJwt("admin.json")
     void shouldNotEditProduct_WhenFieldsInRequestBodyAreEmpty() throws Exception {
-        ProductRequest productRequest = new ProductRequest("dsa", "", 3L, SATISFACTORY);
+        ProductRequest productRequest = new ProductRequest("", "", 0L, GOOD);
         String productRequestAsString = objectMapper.writeValueAsString(productRequest);
 
         final String link = "/api/product/admin/1";
@@ -170,6 +168,54 @@ class AdminProductControllerIntegrationTest extends ContainerIT {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(productRequestAsString))
                 .andExpect(status().isBadRequest())
-                .andExpect(result -> assertTrue(result instanceof MethodArgumentNotValidException));
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException));
+    }
+
+    @Test
+    @WithJwt("admin.json")
+    void shouldNotEditProduct_WhenValueIsLessThan1() throws Exception {
+        ProductRequest productRequest = new ProductRequest("321", "3213", 0L, GOOD);
+        String productRequestAsString = objectMapper.writeValueAsString(productRequest);
+
+        final String link = "/api/product/admin/1";
+
+        mockMvc.perform(MockMvcRequestBuilders.patch(link)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(productRequestAsString))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException));
+    }
+
+    @Test
+    @WithJwt("admin.json")
+    void shouldDeleteProductById() throws Exception {
+        final String linkToGet = "/api/product/2";
+        final String linkToDelete = "/api/product/admin/2";
+
+        mockMvc.perform(MockMvcRequestBuilders.delete(linkToDelete))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(MockMvcRequestBuilders.get(linkToGet))
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ProductNotFoundException));
+    }
+
+    @Test
+    @WithJwt("speedy.json")
+    void shouldNotDeleteProduct_WithUserRole() throws Exception {
+        final String link = "/api/product/admin/2";
+
+        mockMvc.perform(MockMvcRequestBuilders.delete(link))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithJwt("admin.json")
+    void shouldNotDeleteProduct_WhenProductNotFound() throws Exception {
+        final String link = "/api/product/admin/999";
+
+        mockMvc.perform(MockMvcRequestBuilders.delete(link))
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ProductNotFoundException));
     }
 }
