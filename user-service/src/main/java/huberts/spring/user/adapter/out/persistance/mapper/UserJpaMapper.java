@@ -1,6 +1,6 @@
 package huberts.spring.user.adapter.out.persistance.mapper;
 
-import huberts.spring.user.adapter.in.web.resource.UserRequest;
+import huberts.spring.user.adapter.in.web.resource.CreateRequest;
 import huberts.spring.user.adapter.out.persistance.entity.UserEntity;
 import huberts.spring.user.domain.model.UserDomainModel;
 import org.mapstruct.*;
@@ -13,7 +13,7 @@ public interface UserJpaMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "roleName", constant = "ROLE_USER")
-    UserEntity toJpaEntity(UserRequest userRequest, String keycloakId);
+    UserEntity toJpaEntity(CreateRequest userRequest, String keycloakId);
 
     UserEntity toUpdatedJpaEntity(UserDomainModel userDomainModel);
 
