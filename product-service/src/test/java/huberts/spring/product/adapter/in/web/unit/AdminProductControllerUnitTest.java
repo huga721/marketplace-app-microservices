@@ -57,7 +57,7 @@ public class AdminProductControllerUnitTest {
     }
 
     @Test
-    @WithJwt("admin.json")
+    @WithJwt("keycloak/admin.json")
     void shouldGetAllProducts_WithAdminRole() throws Exception {
         Mockito.when(productServicePort.getAllProducts())
                 .thenReturn(List.of(defaultProduct, defaultProduct));
@@ -70,7 +70,7 @@ public class AdminProductControllerUnitTest {
     }
 
     @Test
-    @WithJwt("speedy.json")
+    @WithJwt("keycloak/speedy.json")
     void shouldNotGetAllProducts_WithUserRole() throws Exception {
         final String link = "/api/product/admin";
 
@@ -79,7 +79,7 @@ public class AdminProductControllerUnitTest {
     }
 
     @Test
-    @WithJwt("admin.json")
+    @WithJwt("keycloak/admin.json")
     void shouldEditProductById_WithAdminRole() throws Exception {
         ProductRequest productRequest = new ProductRequest("test", "test", 100L, Quality.GOOD);
         String productRequestAsString = objectMapper.writeValueAsString(productRequest);
@@ -99,7 +99,7 @@ public class AdminProductControllerUnitTest {
     }
 
     @Test
-    @WithJwt("speedy.json")
+    @WithJwt("keycloak/speedy.json")
     void shouldNotEditProduct_WithUserRole() throws Exception {
         ProductRequest productRequest = new ProductRequest("test", "test", 100L, Quality.GOOD);
         String productRequestAsString = objectMapper.writeValueAsString(productRequest);
@@ -113,7 +113,7 @@ public class AdminProductControllerUnitTest {
     }
 
     @Test
-    @WithJwt("admin.json")
+    @WithJwt("keycloak/admin.json")
     void shouldDeleteProduct_WithAdminRole() throws Exception {
         final String link = "/api/product/admin/1";
 
@@ -122,7 +122,7 @@ public class AdminProductControllerUnitTest {
     }
 
     @Test
-    @WithJwt("speedy.json")
+    @WithJwt("keycloak/speedy.json")
     void shouldNotDeleteProduct_WithUserRole() throws Exception {
         final String link = "/api/product/admin/1";
 

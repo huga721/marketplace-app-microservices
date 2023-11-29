@@ -55,7 +55,7 @@ public class AdminControllerUnitTest {
     }
 
     @Test
-    @WithJwt("admin.json")
+    @WithJwt("keycloak/admin.json")
     void shouldEditUser() throws Exception {
         EditRequest editRequest = new EditRequest("newUser", "Foo", "Foo", "f@f.com");
         String editRequestAsString = objectMapper.writeValueAsString(editRequest);
@@ -82,7 +82,7 @@ public class AdminControllerUnitTest {
     }
 
     @Test
-    @WithJwt("speedy.json")
+    @WithJwt("keycloak/speedy.json")
     void shouldNotEditUser_WithUserRole() throws Exception {
         EditRequest editRequest = new EditRequest("newUser", "Foo", "Foo", "f@f.com");
         String editRequestAsString = objectMapper.writeValueAsString(editRequest);
@@ -119,7 +119,7 @@ public class AdminControllerUnitTest {
     }
 
     @Test
-    @WithJwt("admin.json")
+    @WithJwt("keycloak/admin.json")
     void shouldThrowException_WhenUserNotExist() throws Exception {
         EditRequest editRequest = new EditRequest("dd", "Foo", "Foo", "f@f.com");
         String editRequestAsString = objectMapper.writeValueAsString(editRequest);
@@ -143,7 +143,7 @@ public class AdminControllerUnitTest {
     }
 
     @Test
-    @WithJwt("admin.json")
+    @WithJwt("keycloak/admin.json")
     void shouldDeleteUser() throws Exception {
         final String link = "/api/user/admin/1";
 
@@ -152,7 +152,7 @@ public class AdminControllerUnitTest {
     }
 
     @Test
-    @WithJwt("admin.json")
+    @WithJwt("keycloak/admin.json")
     void shouldNotDeleteUser_WhenUserNotExist() throws Exception {
         Mockito.doThrow(new UserNotFoundException(""))
                 .when(userServicePort).deleteUserById(anyLong());

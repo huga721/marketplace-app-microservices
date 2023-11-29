@@ -90,7 +90,7 @@ class AdminProductControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("admin.json")
+    @WithJwt("keycloak/admin.json")
     void shouldGetAllProducts() throws Exception {
         final String link = "/api/product/admin";
 
@@ -101,7 +101,7 @@ class AdminProductControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("speedy.json")
+    @WithJwt("keycloak/speedy.json")
     void shouldNotGetALlProducts_WhenRequestedByUserRole() throws Exception {
         final String link = "/api/product/admin";
 
@@ -110,7 +110,7 @@ class AdminProductControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("admin.json")
+    @WithJwt("keycloak/admin.json")
     void shouldEditProductById() throws Exception {
         ProductRequest productRequest = new ProductRequest("changedName", "changedDescription", 1L, SATISFACTORY);
         String productRequestAsString = objectMapper.writeValueAsString(productRequest);
@@ -128,7 +128,7 @@ class AdminProductControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("admin.json")
+    @WithJwt("keycloak/admin.json")
     void shouldNotEditProduct_WhenProductNotFound() throws Exception {
         ProductRequest productRequest = new ProductRequest("changedName", "changedDescription", 1L, SATISFACTORY);
         String productRequestAsString = objectMapper.writeValueAsString(productRequest);
@@ -143,7 +143,7 @@ class AdminProductControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("speedy.json")
+    @WithJwt("keycloak/speedy.json")
     void shouldNotEditProduct_WhenRequestedByUserRole() throws Exception {
         ProductRequest productRequest = new ProductRequest("changedName", "changedDescription", 1L, SATISFACTORY);
         String productRequestAsString = objectMapper.writeValueAsString(productRequest);
@@ -157,7 +157,7 @@ class AdminProductControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("admin.json")
+    @WithJwt("keycloak/admin.json")
     void shouldNotEditProduct_WhenFieldsInRequestBodyAreEmpty() throws Exception {
         ProductRequest productRequest = new ProductRequest("", "", 0L, GOOD);
         String productRequestAsString = objectMapper.writeValueAsString(productRequest);
@@ -172,7 +172,7 @@ class AdminProductControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("admin.json")
+    @WithJwt("keycloak/admin.json")
     void shouldNotEditProduct_WhenValueIsLessThan1() throws Exception {
         ProductRequest productRequest = new ProductRequest("321", "3213", 0L, GOOD);
         String productRequestAsString = objectMapper.writeValueAsString(productRequest);
@@ -187,7 +187,7 @@ class AdminProductControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("admin.json")
+    @WithJwt("keycloak/admin.json")
     void shouldDeleteProductById() throws Exception {
         final String linkToGet = "/api/product/2";
         final String linkToDelete = "/api/product/admin/2";
@@ -201,7 +201,7 @@ class AdminProductControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("speedy.json")
+    @WithJwt("keycloak/speedy.json")
     void shouldNotDeleteProduct_WithUserRole() throws Exception {
         final String link = "/api/product/admin/2";
 
@@ -210,7 +210,7 @@ class AdminProductControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("admin.json")
+    @WithJwt("keycloak/admin.json")
     void shouldNotDeleteProduct_WhenProductNotFound() throws Exception {
         final String link = "/api/product/admin/999";
 

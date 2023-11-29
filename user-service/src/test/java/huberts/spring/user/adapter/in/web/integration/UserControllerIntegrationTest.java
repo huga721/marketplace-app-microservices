@@ -163,7 +163,7 @@ public class UserControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("speedy.json")
+    @WithJwt("keycloak/speedy.json")
     void shouldEditUser_WithUserRole() throws Exception {
         EditRequest editRequest = new EditRequest("Foo1", "Boo", "Foo", "fake@fake.com");
         String editRequestAsString = objectMapper.writeValueAsString(editRequest);
@@ -182,7 +182,7 @@ public class UserControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("admin.json")
+    @WithJwt("keycloak/admin.json")
     void shouldEditUser_WithAdminRole() throws Exception {
         EditRequest editRequest = new EditRequest("Foo", "Foo", "Foo", "f@f.com");
         String editRequestAsString = objectMapper.writeValueAsString(editRequest);
@@ -211,7 +211,7 @@ public class UserControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("walter.json")
+    @WithJwt("keycloak/walter.json")
     void shouldThrowException_WhenFieldsOfRequestBodyAreEmpty() throws Exception {
         EditRequest editRequest = new EditRequest("", "", "", "");
         String editRequestAsString = objectMapper.writeValueAsString(editRequest);
@@ -226,7 +226,7 @@ public class UserControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("userToDelete.json")
+    @WithJwt("keycloak/userToDelete.json")
     void shouldDeleteUser_WithUserRole() throws Exception {
         final String link = "/api/user";
 

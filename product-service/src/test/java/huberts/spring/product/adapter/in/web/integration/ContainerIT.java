@@ -22,7 +22,7 @@ public class ContainerIT {
                 .withReuse(true);
         postgreSQLContainer.start();
         keycloakContainer = new KeycloakContainer("quay.io/keycloak/keycloak:22.0.1")
-                .withRealmImportFile("marketplace-realm.json")
+                .withRealmImportFile("keycloak/marketplace-realm.json")
                 .withAdminUsername("admin")
                 .withAdminPassword("password");
         keycloakContainer.start();

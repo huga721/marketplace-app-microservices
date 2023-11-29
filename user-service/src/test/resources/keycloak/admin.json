@@ -1,13 +1,13 @@
 {
-  "exp": 1698935449,
-  "iat": 1698934249,
-  "jti": "a2563444-cc2c-44fd-85ea-436ea0c0b369",
+  "exp": 1698945657,
+  "iat": 1698944457,
+  "jti": "a25bf753-3e95-4c4b-8d71-3bff83ba4ab9",
   "iss": "http://localhost:8181/realms/marketplace-app-realm",
   "aud": "account",
-  "sub": "cbe10031-5ab7-4ff6-b740-e9b001d93dd1",
+  "sub": "caedd3a9-062b-457b-94a1-b893f0b21b4e",
   "typ": "Bearer",
   "azp": "marketplace-app",
-  "session_state": "1bdace30-cf8e-471d-b925-be7474f82e6e",
+  "session_state": "ffa45dc1-b07c-4088-9d9f-fe5e488808ca",
   "acr": "1",
   "allowed-origins": [
     "http://localhost:8080"
@@ -15,6 +15,7 @@
   "realm_access": {
     "roles": [
       "offline_access",
+      "admin",
       "uma_authorization",
       "default-roles-marketplace-app-realm",
       "user"
@@ -30,16 +31,17 @@
     },
     "marketplace-app": {
       "roles": [
-        "role-user"
+        "role-user",
+        "role-admin"
       ]
     }
   },
   "scope": "profile email",
-  "sid": "1bdace30-cf8e-471d-b925-be7474f82e6e",
+  "sid": "ffa45dc1-b07c-4088-9d9f-fe5e488808ca",
   "email_verified": true,
-  "name": "Walter White",
-  "preferred_username": "walt",
-  "given_name": "Walter",
-  "family_name": "White",
-  "email": "walt@gmail.com"
+  "name": "Karol Sztaba",
+  "preferred_username": "moderator",
+  "given_name": "Karol",
+  "family_name": "Sztaba",
+  "email": "ksfake@gmail.com"
 }

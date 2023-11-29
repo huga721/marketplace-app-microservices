@@ -82,7 +82,7 @@ public class AdminControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("admin.json")
+    @WithJwt("keycloak/admin.json")
     void shouldEditUserById_WithUserAdminRole() throws Exception {
         EditRequest editRequest = new EditRequest("Foo1", "Boo", "Foo", "fake@fake.com");
         String editRequestAsString = objectMapper.writeValueAsString(editRequest);
@@ -102,7 +102,7 @@ public class AdminControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("admin.json")
+    @WithJwt("keycloak/admin.json")
     void shouldThrowException_WhenUserNotFound() throws Exception {
         EditRequest editRequest = new EditRequest("Foo1", "Boo", "Foo", "fake@fake.com");
         String editRequestAsString = objectMapper.writeValueAsString(editRequest);
@@ -117,7 +117,7 @@ public class AdminControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("speedy.json")
+    @WithJwt("keycloak/speedy.json")
     void shouldNotEditUser_WhenUserIsNotAdmin() throws Exception {
         EditRequest editRequest = new EditRequest("Foo1", "Boo", "Foo", "fake@fake.com");
         String editRequestAsString = objectMapper.writeValueAsString(editRequest);
@@ -131,7 +131,7 @@ public class AdminControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("admin.json")
+    @WithJwt("keycloak/admin.json")
     void shouldThrowException_WhenRequestBodyFieldsAreEmpty() throws Exception {
         EditRequest editRequest = new EditRequest("", "", "", "");
         String editRequestAsString = objectMapper.writeValueAsString(editRequest);
@@ -146,7 +146,7 @@ public class AdminControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("admin.json")
+    @WithJwt("keycloak/admin.json")
     void shouldDeleteUser_WithAdminRole() throws Exception {
         final String deleteUserLink = "/api/user/admin/3";
         final String getUserLink = "/api/user/3";
@@ -165,7 +165,7 @@ public class AdminControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("admin.json")
+    @WithJwt("keycloak/admin.json")
     void shouldThrowException_WhenUserDoesntExist() throws Exception {
         final String link = "/api/user/admin/999";
 
@@ -176,7 +176,7 @@ public class AdminControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("speedy.json")
+    @WithJwt("keycloak/speedy.json")
     void shouldNotDeleteUser_WithUserRole() throws Exception {
         final String link = "/api/user/admin/999";
 

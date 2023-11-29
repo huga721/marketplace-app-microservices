@@ -126,7 +126,7 @@ public class UserControllerUnitTest {
     }
 
     @Test
-    @WithJwt("walter.json")
+    @WithJwt("keycloak/walter.json")
     void shouldEditUser_WithUserRole() throws Exception {
         EditRequest editRequest = new EditRequest("newUser", "Foo", "Foo", "f@f.com");
         String editRequestAsString = objectMapper.writeValueAsString(editRequest);
@@ -154,7 +154,7 @@ public class UserControllerUnitTest {
     }
 
     @Test
-    @WithJwt("admin.json")
+    @WithJwt("keycloak/admin.json")
     void shouldEditUser_WithAdminRole() throws Exception {
         EditRequest editRequest = new EditRequest("newUser", "Foo", "Foo", "f@f.com");
         String editRequestAsString = objectMapper.writeValueAsString(editRequest);
@@ -202,7 +202,7 @@ public class UserControllerUnitTest {
     }
 
     @Test
-    @WithJwt("walter.json")
+    @WithJwt("keycloak/walter.json")
     void shouldDeleteUser_WithUserRole() throws Exception {
         final String link = "/api/user";
 

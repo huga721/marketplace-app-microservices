@@ -81,7 +81,7 @@ class AuthenticationControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("speedy.json")
+    @WithJwt("keycloak/speedy.json")
     void shouldRegisterUser_WithAnyRole() throws Exception {
         CreateRequest createRequest = new CreateRequest("newUser2", "Password", "1", "2", "3@g.com");
         String createRequestAsString = objectMapper.writeValueAsString(createRequest);
