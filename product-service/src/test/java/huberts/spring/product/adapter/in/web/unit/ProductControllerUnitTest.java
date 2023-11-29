@@ -45,6 +45,7 @@ public class ProductControllerUnitTest {
 
     @Autowired
     private MockMvc mockMvc;
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -78,7 +79,7 @@ public class ProductControllerUnitTest {
     }
 
     @Test
-    @WithJwt("speedy.json")
+    @WithJwt("keycloak/speedy.json")
     void shouldReturnActiveProductList_WithUserRole() throws Exception {
         List<ProductDomainModel> products = new ArrayList<>();
         products.add(defaultProduct);
@@ -95,7 +96,7 @@ public class ProductControllerUnitTest {
     }
 
     @Test
-    @WithJwt("speedy.json")
+    @WithJwt("keycloak/speedy.json")
     void shouldReturnEmptyList_WhenNoProductsFound() throws Exception {
         List<ProductDomainModel> products = new ArrayList<>();
 
@@ -125,7 +126,7 @@ public class ProductControllerUnitTest {
     }
 
     @Test
-    @WithJwt("speedy.json")
+    @WithJwt("keycloak/speedy.json")
     void shouldGetProductById_WithUserRole() throws Exception {
         Mockito.when(productServicePort.getProductById(1L))
                 .thenReturn(defaultProduct);
@@ -149,7 +150,7 @@ public class ProductControllerUnitTest {
     }
 
     @Test
-    @WithJwt("speedy.json")
+    @WithJwt("keycloak/speedy.json")
     void shouldCreateProduct_WithUserRole() throws Exception {
         ProductRequest productRequest = new ProductRequest("test", "test", 100L, Quality.GOOD);
         String productRequestAsString = objectMapper.writeValueAsString(productRequest);
@@ -183,7 +184,7 @@ public class ProductControllerUnitTest {
     }
 
     @Test
-    @WithJwt("speedy.json")
+    @WithJwt("keycloak/speedy.json")
     void shouldGetAllProductsOfAuthenticatedUser() throws Exception {
         Mockito.when(productServicePort.getProductsByKeycloakId(anyString()))
                 .thenReturn(List.of(defaultProduct, defaultProduct));
@@ -204,7 +205,7 @@ public class ProductControllerUnitTest {
     }
 
     @Test
-    @WithJwt("speedy.json")
+    @WithJwt("keycloak/speedy.json")
     void shouldEditProductByIdAndKeycloakId_WithUserRole() throws Exception {
         ProductRequest productRequest = new ProductRequest("test", "test", 100L, Quality.GOOD);
         String productRequestAsString = objectMapper.writeValueAsString(productRequest);
@@ -236,7 +237,7 @@ public class ProductControllerUnitTest {
     }
 
     @Test
-    @WithJwt("speedy.json")
+    @WithJwt("keycloak/speedy.json")
     void shouldDeleteProductByIdAndKeycloakId_WithUserRole() throws Exception {
         Mockito.doNothing().when(productServicePort).deleteProductById(anyLong());
 

@@ -115,7 +115,7 @@ public class ProductControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("speedy.json")
+    @WithJwt("keycloak/speedy.json")
     void shouldGetAllActiveProduct_WithUserRole() throws Exception {
         final String link = "/api/product";
 
@@ -154,7 +154,7 @@ public class ProductControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("speedy.json")
+    @WithJwt("keycloak/speedy.json")
     void shouldCreateProduct_WithUserRole() throws Exception {
         ProductRequest productRequest = new ProductRequest("product", "description", 10L, GOOD);
         String productRequestAsString = objectMapper.writeValueAsString(productRequest);
@@ -219,7 +219,7 @@ public class ProductControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("speedy.json")
+    @WithJwt("keycloak/speedy.json")
     void shouldGetProductsOfAuthenticatedUser() throws Exception {
         String userKeycloakId = "e06919ed-dff5-4ca0-a0ad-ab0ca0a90a88";
 
@@ -240,7 +240,7 @@ public class ProductControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("speedy.json")
+    @WithJwt("keycloak/speedy.json")
     void shouldEditProduct() throws Exception {
         ProductRequest productRequest = new ProductRequest("test", "test", 10L, GOOD);
         String productRequestAsString = objectMapper.writeValueAsString(productRequest);
@@ -272,7 +272,7 @@ public class ProductControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("speedy.json")
+    @WithJwt("keycloak/speedy.json")
     void shouldNotEditProduct_WhenFieldsInRequestBodyAreEmpty() throws Exception {
         ProductRequest productRequest = new ProductRequest("", "test", 10L, GOOD);
         String productRequestAsString = objectMapper.writeValueAsString(productRequest);
@@ -287,7 +287,7 @@ public class ProductControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("speedy.json")
+    @WithJwt("keycloak/speedy.json")
     void shouldNotEditProduct_WhenPriceInRequestIsLessThan1() throws Exception {
         ProductRequest productRequest = new ProductRequest("test", "test", 0L, GOOD);
         String productRequestAsString = objectMapper.writeValueAsString(productRequest);
@@ -302,7 +302,7 @@ public class ProductControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("speedy.json")
+    @WithJwt("keycloak/speedy.json")
     void shouldDeleteProduct() throws Exception {
         final String link = "/api/product/3";
 
@@ -323,7 +323,7 @@ public class ProductControllerIntegrationTest extends ContainerIT {
     }
 
     @Test
-    @WithJwt("speedy.json")
+    @WithJwt("keycloak/speedy.json")
     void shouldNotDeleteProduct_WhenProductNotFound() throws Exception {
         final String link = "/api/product/999";
 
