@@ -17,13 +17,17 @@ public class BasketDomainModel {
     private String keycloakId;
     private Status status = Status.ACTIVE;
 
-    public void addProductToBasket(BasketProductDomainModel basketProductDomainModel) {
-        this.basketProducts.add(basketProductDomainModel);
+    public void addProduct(BasketProductDomainModel basketProductDomainModel) {
+        basketProducts.add(basketProductDomainModel);
     }
 
-    public boolean isUserAuthorizedToAddProduct(ProductDomainModel product) {
+    public void removeProduct(BasketProductDomainModel basketProductDomainModel) {
+        basketProducts.remove(basketProductDomainModel);
+    }
+
+    public boolean isUserNotAuthorizedToAddProduct(ProductDomainModel product) {
         String productKeycloakId = product.getKeycloakId();
-        return !keycloakId.equals(productKeycloakId);
+        return keycloakId.equals(productKeycloakId);
     }
 
     public boolean isProductInBasket(ProductDomainModel product) {
@@ -34,5 +38,15 @@ public class BasketDomainModel {
 
     public void setInactiveStatus() {
         status = Status.INACTIVE;
+    }
+
+    public Long calculateBasketValue() {
+        return basketProducts.stream()
+                .mapToLong(BasketProductDomainModel::getProductValue)
+                .sum();
+    }
+
+    public Integer returnProductNumber() {
+        return basketProducts.size();
     }
 }
