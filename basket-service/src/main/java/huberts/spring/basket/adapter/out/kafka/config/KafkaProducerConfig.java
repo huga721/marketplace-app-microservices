@@ -2,6 +2,7 @@ package huberts.spring.basket.adapter.out.kafka.config;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
@@ -14,7 +15,8 @@ import java.util.Map;
 @Configuration
 public class KafkaProducerConfig {
 
-    private String bootstrapServer = "localhost:9092";
+    @Value("${spring.kafka.bootstrap-server}")
+    private String bootstrapServer;
 
     public Map<String, Object> producerConfig() {
         Map<String, Object> props = new HashMap<>();

@@ -1,16 +1,14 @@
 package huberts.spring.basket.adapter.out.kafka.config;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.protocol.types.Field;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 
 import java.util.HashMap;
@@ -19,7 +17,8 @@ import java.util.Map;
 @Configuration
 public class KafkaConsumerConfig {
 
-    private String bootstrapServer = "localhost:9092";
+    @Value("${spring.kafka.bootstrap-server}")
+    private String bootstrapServer;
 
     public Map<String, Object> consumerConfig() {
         Map<String, Object> props = new HashMap<>();

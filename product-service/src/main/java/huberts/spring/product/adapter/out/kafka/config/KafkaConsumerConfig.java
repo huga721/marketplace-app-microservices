@@ -2,6 +2,7 @@ package huberts.spring.product.adapter.out.kafka.config;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
@@ -16,7 +17,8 @@ import java.util.Map;
 @Configuration
 public class KafkaConsumerConfig {
 
-    private static final String BOOTSTRAP_SERVER = "localhost:9092";
+    @Value("${spring.kafka.bootstrap-server}")
+    private String BOOTSTRAP_SERVER;
 
     public Map<String, Object> consumerConfig() {
         Map<String, Object> props = new HashMap<>();
