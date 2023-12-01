@@ -9,8 +9,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "basket")
-@Getter
-@Setter
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,7 +18,7 @@ public class BasketEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "basketEntity")
+    @OneToMany(mappedBy = "basketEntity", fetch = FetchType.LAZY)
     private List<BasketProductEntity> basketProducts = new ArrayList<>();
 
     private Integer productNumber;
