@@ -6,8 +6,10 @@ import huberts.spring.basket.domain.model.BasketProductDomainModel;
 import java.util.List;
 
 public interface BasketProductJpaPort {
-    BasketProductDomainModel createBasketProduct(BasketProductDomainModel basketProductDomainModel,
-                                                 BasketDomainModel basketDomainModel);
+    BasketProductDomainModel saveBasketProduct(BasketProductDomainModel basketProductDomainModel,
+                                               BasketDomainModel basketDomainModel);
 
     List<BasketProductDomainModel> getAllBasketProducts();
+
+    void deleteBasketProduct(BasketProductDomainModel basketProductDomainModel);
 }
