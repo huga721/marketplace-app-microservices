@@ -9,12 +9,11 @@ public interface BasketServicePort {
     BasketDomainModel addProductToBasket(Long productId, String keycloakId);
 
     BasketDomainModel getBasketById(Long basketId);
-
+    BasketDomainModel getBasketDetails(String keycloakId);
     List<BasketDomainModel> getBaskets();
-
     List<BasketProductDomainModel> getBasketProducts();
 
-    BasketDomainModel getBasketDetails(String keycloakId);
-
     BasketDomainModel setBasketInactive(BasketDomainModel basketDomainModel);
+
+    BasketDomainModel removeProductFromBasket(Long productId, String keycloakId);
 }
