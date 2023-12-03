@@ -1,0 +1,45 @@
+{
+  "exp": 1698951810,
+  "iat": 1698950610,
+  "jti": "f2cab452-c58a-418b-868a-482e9077ff61",
+  "iss": "http://localhost:8181/realms/marketplace-app-realm",
+  "aud": "account",
+  "sub": "ae885313-3214-4682-8360-09456c7ac312",
+  "typ": "Bearer",
+  "azp": "marketplace-app",
+  "session_state": "ae885313-4d31-4682-8360-09456c7ac3d7",
+  "acr": "1",
+  "allowed-origins": [
+    "http://localhost:8080"
+  ],
+  "realm_access": {
+    "roles": [
+      "offline_access",
+      "uma_authorization",
+      "default-roles-marketplace-app-realm",
+      "user"
+    ]
+  },
+  "resource_access": {
+    "account": {
+      "roles": [
+        "manage-account",
+        "manage-account-links",
+        "view-profile"
+      ]
+    },
+    "marketplace-app": {
+      "roles": [
+        "role-user"
+      ]
+    }
+  },
+  "scope": "profile email",
+  "sid": "ae885313-4d31-4682-8360-09456c7ac312",
+  "email_verified": true,
+  "name": "Fredi Kamionka",
+  "preferred_username": "giver",
+  "given_name": "Fredi",
+  "family_name": "Kamionka",
+  "email": "fkfake@gmail.com"
+}
