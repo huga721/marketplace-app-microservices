@@ -11,5 +11,5 @@ public interface BasketProductJpaPort {
 
     List<BasketProductDomainModel> getAllBasketProducts();
 
-    void deleteBasketProduct(BasketProductDomainModel basketProductDomainModel);
+    void deleteBasketProduct(BasketProductDomainModel basketProductDomainModel, BasketDomainModel basketDomainModel);
 }
