@@ -54,7 +54,7 @@ public interface BasketJpaMapper {
 
     @Named("getProductAmount")
     default Integer getProductAmount(List<BasketProductDomainModel> basketProducts) {
-        return basketProducts.size() + 1;
+        return basketProducts.size();
     }
 
     @Named("calculateBasketValue")
