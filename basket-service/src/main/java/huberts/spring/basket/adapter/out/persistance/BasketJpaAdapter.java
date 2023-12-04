@@ -6,7 +6,6 @@ import huberts.spring.basket.adapter.out.feign.product.model.Status;
 import huberts.spring.basket.application.exception.BasketNotFoundException;
 import huberts.spring.basket.domain.model.BasketDomainModel;
 import huberts.spring.basket.domain.port.out.BasketJpaPort;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +33,12 @@ public class BasketJpaAdapter implements BasketJpaPort {
     public BasketDomainModel findBasketByKeycloakIdAndStatus(String keycloakId, Status status) {
         BasketEntity basketEntity = basketRepository.findBasketEntityByKeycloakIdAndStatus(keycloakId, status);
         return BASKET_JPA_MAPPER.toDomainModel(basketEntity);
+    }
+
+    @Override
+    public void deleteBasket(BasketDomainModel basket) {
+        BasketEntity basketEntity = BASKET_JPA_MAPPER.toJpaEntity(basket);
+        basketRepository.delete(basketEntity);
     }
 
     @Override
