@@ -12,4 +12,6 @@ public interface BasketJpaPort {
     List<BasketDomainModel> getAllBaskets();
 
     BasketDomainModel findBasketByKeycloakIdAndStatus(String keycloakId, Status status);
+
+    void deleteBasket(BasketDomainModel basket);
 }
