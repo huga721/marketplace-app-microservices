@@ -116,10 +116,11 @@ public class BasketService implements BasketServicePort {
 
     @Transactional
     @Override
-    public BasketDomainModel removeProductFromBasket(Long productId, String keycloakId) {
+    public String removeProductFromBasket(Long productId, String keycloakId) {
         LOGGER.info(">> BasketService: removing product with id: {} from basket", productId);
 
-        BasketDomainModel basket = basketJpaPort.findBasketByKeycloakIdAndStatus(keycloakId, Status.INACTIVE);
+        BasketDomainModel basket = basketJpaPort.findBasketByKeycloakIdAndStatus(keycloakId, Status.ACTIVE);
+        LOGGER.info(">> BasketService: basket found {}", basket);
 
         if (basket == null) {
             String errorMessage = "Basket of current authenticated user is empty";
@@ -137,11 +138,20 @@ public class BasketService implements BasketServicePort {
                     return new ProductNotFoundException(errorMessage);
                 });
 
-        basketProductJpaPort.deleteBasketProduct(product);
-
         basket.removeProduct(product);
 
+
+        basketJpaPort.saveBasket(basket);
+        basketProductJpaPort.deleteBasketProduct(product, basket);
+
+        if (basket.getBasketProducts().size() == 0) {
+            LOGGER.info(">> BasketService: basket does not contain any product, deleting basket {}", basket);
+            basketJpaPort.deleteBasket(basket);
+            return "Removed product from basket, deleted basket.";
+        }
+
         LOGGER.info(">> BasketService: removed product: {} from basket", product);
-        return basketJpaPort.saveBasket(basket);
+        basketJpaPort.saveBasket(basket);
+        return "Removed product from basket, basket sill available to use.";
     }
 }
