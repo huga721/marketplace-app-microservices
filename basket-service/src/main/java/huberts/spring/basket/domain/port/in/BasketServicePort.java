@@ -15,5 +15,5 @@ public interface BasketServicePort {
 
     BasketDomainModel setBasketInactive(BasketDomainModel basketDomainModel);
 
-    BasketDomainModel removeProductFromBasket(Long productId, String keycloakId);
+    String removeProductFromBasket(Long productId, String keycloakId);
 }
