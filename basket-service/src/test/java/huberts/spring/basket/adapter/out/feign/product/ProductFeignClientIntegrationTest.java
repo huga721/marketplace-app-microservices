@@ -24,7 +24,7 @@ class ProductFeignClientIntegrationTest {
 
         @Bean
         public ServiceInstanceListSupplier serviceInstanceListSupplier() {
-            return new TestServiceInstanceListSupplier("product-service", 8081);
+            return new FeignInstanceTestSupplier("product-service", 8081);
         }
     }
 
