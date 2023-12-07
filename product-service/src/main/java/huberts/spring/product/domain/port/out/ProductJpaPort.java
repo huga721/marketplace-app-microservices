@@ -1,16 +1,22 @@
 package huberts.spring.product.domain.port.out;
 
-import huberts.spring.product.adapter.in.web.resource.ProductRequest;
 import huberts.spring.product.domain.model.ProductDomainModel;
 
 import java.util.List;
 
 public interface ProductJpaPort {
 
-    ProductDomainModel createProduct(ProductRequest productRequest, String keycloakId);
+    ProductDomainModel saveProduct(ProductDomainModel productDomain);
+    List<ProductDomainModel> saveProducts(List<ProductDomainModel> productsDomain);
 
+    List<ProductDomainModel> getActiveProducts();
     List<ProductDomainModel> getAllProducts();
     ProductDomainModel getProductById(Long productId);
+    ProductDomainModel getProductByIdAndKeycloakId(Long productId, String keycloakId);
 
-    void deleteProductById(Long productId);
+    void deleteProduct(ProductDomainModel productDomainModel);
+
+    List<ProductDomainModel> findProductsById(List<Long> productId);
+
+    List<ProductDomainModel> getActiveProductsByKeycloakId(String keycloakId);
 }
