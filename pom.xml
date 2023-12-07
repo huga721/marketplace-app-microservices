@@ -32,6 +32,8 @@
         <org.keycloak.version>22.0.1</org.keycloak.version>
         <testcontainers.version>1.19.1</testcontainers.version>
         <testcontainers.keycloak.version>3.0.0</testcontainers.keycloak.version>
+        <oauth2-addons>7.1.10</oauth2-addons>
+        <wiremock.version>3.0.1</wiremock.version>
     </properties>
 
     <dependencyManagement>
