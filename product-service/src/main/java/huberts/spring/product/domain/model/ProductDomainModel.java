@@ -1,6 +1,5 @@
 package huberts.spring.product.domain.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import huberts.spring.product.adapter.in.web.resource.ProductRequest;
 import huberts.spring.product.application.exception.ProductStatusException;
 import lombok.AllArgsConstructor;
@@ -8,7 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Builder
@@ -47,12 +45,5 @@ public class ProductDomainModel {
         }
         status = Status.INACTIVE;
         return this;
-    }
-
-    public ProductDomainModel returnActiveProduct() {
-        if (isActive()) {
-            return this;
-        }
-        return null;
     }
 }
