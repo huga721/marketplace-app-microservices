@@ -9,4 +9,8 @@ public interface OrderJpaPort {
     OrderDomainModel saveOrder(OrderDomainModel orderDomainModel);
 
     List<OrderDomainModel> getAllOrders();
+
+    OrderDomainModel getOrderById(Long orderId);
+
+    List<OrderDomainModel> getOrdersByKeycloakId(String keycloakId);
 }
