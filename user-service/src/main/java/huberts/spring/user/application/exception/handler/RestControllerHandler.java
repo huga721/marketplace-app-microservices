@@ -3,7 +3,6 @@ package huberts.spring.user.application.exception.handler;
 import huberts.spring.user.application.exception.UserExistException;
 import huberts.spring.user.application.exception.UserNotFoundException;
 import huberts.spring.user.application.exception.model.ExceptionMessage;
-import net.bytebuddy.asm.Advice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
