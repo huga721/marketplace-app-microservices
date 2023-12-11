@@ -10,4 +10,6 @@ public interface OrderServicePort {
     OrderDomainModel createOrder(OrderRequest orderRequest, String keycloakId);
 
     List<OrderDomainModel> getOrders();
+    OrderDomainModel getOrderById(Long orderId);
+    List<OrderDomainModel> getAuthenticatedUserOrder(String keycloakId);
 }
