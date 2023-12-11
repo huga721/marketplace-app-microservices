@@ -19,7 +19,4 @@ public class OrderDomainModel {
     private String address;
     private String postalCode;
 
-    public void setPaymentType(PaymentType paymentType) {
-//        switch (paymentType.equalsIgnoreCase(""))
-    }
 }
