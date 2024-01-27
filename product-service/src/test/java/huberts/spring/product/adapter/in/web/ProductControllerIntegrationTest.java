@@ -1,7 +1,8 @@
-package huberts.spring.product.adapter.in.web.integration;
+package huberts.spring.product.adapter.in.web.in.integration;
 
 import com.c4_soft.springaddons.security.oauth2.test.annotations.WithJwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import huberts.spring.product.ContainerIT;
 import huberts.spring.product.adapter.in.web.resource.ProductRequest;
 import huberts.spring.product.adapter.out.persistance.entity.ProductEntity;
 import huberts.spring.product.adapter.out.persistance.entity.Quality;

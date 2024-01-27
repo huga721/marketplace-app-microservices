@@ -1,4 +1,4 @@
-package huberts.spring.product.adapter.in.web.integration;
+package huberts.spring.product.adapter.in.web.out;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
