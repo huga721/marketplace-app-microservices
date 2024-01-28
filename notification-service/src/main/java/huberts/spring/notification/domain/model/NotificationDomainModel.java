@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 public class NotificationDomainModel {
-
     private Long id;
     private String message;
     private LocalDateTime timestamp;
+    private String keycloakId;
 }
