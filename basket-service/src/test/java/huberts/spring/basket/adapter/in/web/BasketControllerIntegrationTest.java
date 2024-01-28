@@ -1,7 +1,7 @@
 package huberts.spring.basket.adapter.in.web;
 
 import com.c4_soft.springaddons.security.oauth2.test.annotations.WithJwt;
-import huberts.spring.basket.ContainerIT;
+import huberts.spring.basket.adapter.ContainerIT;
 import huberts.spring.basket.adapter.out.feign.product.ProductFeignClient;
 import huberts.spring.basket.adapter.out.feign.product.model.ProductDomainModel;
 import huberts.spring.basket.adapter.out.feign.product.model.Quality;

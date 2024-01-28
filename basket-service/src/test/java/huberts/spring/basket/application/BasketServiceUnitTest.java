@@ -273,14 +273,14 @@ class BasketServiceUnitTest {
                 .thenReturn(defaultBasket);
 
         doNothing().when(basketProductJpaPort)
-                .deleteBasketProduct(any(BasketProductDomainModel.class));
+                .deleteBasketProduct(any(BasketProductDomainModel.class), any(BasketDomainModel.class));
 
         Mockito.when(basketJpaPort.saveBasket(any(BasketDomainModel.class)))
                 .thenReturn(defaultBasket);
 
-        BasketDomainModel fromService = basketService.removeProductFromBasket(1L, "123");
+        String fromService = basketService.removeProductFromBasket(1L, "123");
 
-        assertEquals(fromService.getBasketProducts().size(), 0);
+        assertEquals("Removed product from basket, basket sill available to use.", fromService);
     }
 
     @Test

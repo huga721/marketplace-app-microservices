@@ -1,8 +1,7 @@
-package huberts.spring.user.adapter.in.web.unit;
+package huberts.spring.user.application;
 
 import huberts.spring.user.adapter.in.web.resource.CreateRequest;
 import huberts.spring.user.adapter.in.web.resource.EditRequest;
-import huberts.spring.user.application.UserService;
 import huberts.spring.user.application.exception.UserExistException;
 import huberts.spring.user.application.exception.UserNotFoundException;
 import huberts.spring.user.domain.model.UserDomainModel;

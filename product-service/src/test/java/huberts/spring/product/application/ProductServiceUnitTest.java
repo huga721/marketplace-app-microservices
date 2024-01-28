@@ -1,8 +1,7 @@
-package huberts.spring.product.adapter.in.web.unit;
+package huberts.spring.product.application;
 
 import huberts.spring.product.adapter.in.web.resource.ProductRequest;
 import huberts.spring.product.adapter.in.web.resource.Quality;
-import huberts.spring.product.application.ProductService;
 import huberts.spring.product.application.exception.ProductNotFoundException;
 import huberts.spring.product.application.exception.ProductStatusException;
 import huberts.spring.product.domain.model.ProductDomainModel;

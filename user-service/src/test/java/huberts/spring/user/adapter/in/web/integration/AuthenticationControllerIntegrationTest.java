@@ -3,6 +3,7 @@ package huberts.spring.user.adapter.in.web.integration;
 import com.c4_soft.springaddons.security.oauth2.test.annotations.WithJwt;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import huberts.spring.user.adapter.in.web.ContainerIT;
 import huberts.spring.user.adapter.in.web.resource.CreateRequest;
 import huberts.spring.user.adapter.in.web.resource.LoginRequest;
 import huberts.spring.user.adapter.out.persistance.entity.UserEntity;

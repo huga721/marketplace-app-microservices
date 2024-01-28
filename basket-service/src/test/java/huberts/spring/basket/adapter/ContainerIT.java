@@ -1,4 +1,4 @@
-package huberts.spring.basket;
+package huberts.spring.basket.adapter;
 
 import dasniko.testcontainers.keycloak.KeycloakContainer;
 import org.springframework.boot.test.context.SpringBootTest;

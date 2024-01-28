@@ -1,4 +1,4 @@
-package huberts.spring.user.adapter.in.web.integration;
+package huberts.spring.user.adapter.in.web;
 
 import dasniko.testcontainers.keycloak.KeycloakContainer;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,4 +1,4 @@
-package huberts.spring.product.adapter.in.web.in.unit;
+package huberts.spring.product.adapter.in.web.unit;
 
 import com.c4_soft.springaddons.security.oauth2.test.annotations.WithJwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
