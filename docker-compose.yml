@@ -85,13 +85,13 @@ services:
     image: postgres
     environment:
       POSTGRES_USER: admin-notification
-      POSTGRES-PASSWORD: admin-notification
+      POSTGRES_PASSWORD: admin-notification
       PGDATA: /data/postgres
       PGPORT: 5437
     volumes:
       - postgres-notification:/data/postgres
     ports:
-      - "5347:5437"
+      - "5437:5437"
     networks:
       - postgres
     restart: unless-stopped
