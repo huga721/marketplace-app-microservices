@@ -22,13 +22,12 @@ import java.util.concurrent.CountDownLatch;
 public class ProductListener {
 
     private final Logger LOGGER = LoggerFactory.getLogger(ProductListener.class);
-
     private final ObjectMapper objectMapper;
     private final ProductServicePort productServicePort;
 
     private CountDownLatch latch = new CountDownLatch(1);
 
-    @KafkaListener(topics = "product.sold", groupId = "one")
+    @KafkaListener(topics = "product.sell", groupId = "product")
     public List<ProductDomainModel> listens(final String in) throws JsonProcessingException {
         latch.countDown();
         objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);

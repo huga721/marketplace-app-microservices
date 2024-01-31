@@ -10,40 +10,40 @@ public class KafkaTopicConfig {
 
     @Bean
     public NewTopic productCreatedNotificationTopic() {
-        return TopicBuilder.name("topic.created.notification")
-                .partitions(10)
+        return TopicBuilder.name("product.created.notification")
+                .partitions(1)
                 .replicas(1)
                 .build();
     }
 
     @Bean
     public NewTopic productInactiveNotificationTopic() {
-        return TopicBuilder.name("topic.inactive.notification")
-                .partitions(10)
+        return TopicBuilder.name("product.inactive.notification")
+                .partitions(1)
                 .replicas(1)
                 .build();
     }
 
     @Bean
     public NewTopic productEditNotificationTopic() {
-        return TopicBuilder.name("topic.edit.notification")
-                .partitions(10)
+        return TopicBuilder.name("product.edit.notification")
+                .partitions(1)
                 .replicas(1)
                 .build();
     }
 
     @Bean
     public NewTopic productDeleteNotificationTopic() {
-        return TopicBuilder.name("topic.delete.notification")
-                .partitions(10)
+        return TopicBuilder.name("product.delete.notification")
+                .partitions(1)
                 .replicas(1)
                 .build();
     }
 
     @Bean
     public NewTopic productDeleteByAdminNotificationTopic() {
-        return TopicBuilder.name("topic.delete.admin.notification")
-                .partitions(10)
+        return TopicBuilder.name("product.delete.admin.notification")
+                .partitions(1)
                 .replicas(1)
                 .build();
     }

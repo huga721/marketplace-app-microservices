@@ -32,21 +32,21 @@ public class KafkaNotificationService implements KafkaNotificationServicePort {
 
     @Override
     public void sendProductCreatedNotificationEvent(ProductDomainModel productDomainModel) {
-        sendNotification("topic.created.notification", productDomainModel);
+        sendNotification("product.created.notification", productDomainModel);
     }
 
     @Override
     public void sendProductInactiveNotificationEvent(List<ProductDomainModel> productDomainModel) {
-        sendNotification("topic.inactive.notification", productDomainModel);
+        sendNotification("product.inactive.notification", productDomainModel);
     }
 
     @Override
     public void sendProductEditedNotificationEvent(ProductDomainModel productDomainModel) {
-        sendNotification("topic.edit.notification", productDomainModel);
+        sendNotification("product.edit.notification", productDomainModel);
     }
 
     @Override
     public void sendProductDeletedNotificationEvent(ProductDomainModel productDomainModel) {
-        sendNotification("topic.delete.notification", productDomainModel);
+        sendNotification("product.delete.notification", productDomainModel);
     }
 }
