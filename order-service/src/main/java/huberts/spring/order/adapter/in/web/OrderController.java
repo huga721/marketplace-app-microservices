@@ -40,7 +40,7 @@ public class OrderController {
     }
 
     @RolesAllowed("role-user")
-    @GetMapping
+    @GetMapping("/user")
     List<OrderDomainModel> getAuthenticatedUserOrder(@AuthenticationPrincipal Jwt jwt) {
         LOGGER.info(">> OrderController: getting authenticated user order");
         String keycloakId = jwt.getSubject();
