@@ -17,12 +17,15 @@ import java.util.Map;
 @Configuration
 public class KafkaConsumerConfig {
 
-    @Value("${spring.kafka.bootstrap-server}")
-    private String bootstrapServer;
+    private final String BOOTSTRAP_SERVER;
+
+    public KafkaConsumerConfig(@Value("${spring.kafka.bootstrap-server}") String bootstrapServer) {
+        this.BOOTSTRAP_SERVER = bootstrapServer;
+    }
 
     public Map<String, Object> consumerConfig() {
         Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVER);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         return props;
