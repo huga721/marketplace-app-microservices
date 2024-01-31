@@ -31,6 +31,9 @@ spring:
     change-log: changelog.xml
     enabled: true
 
+  kafka:
+    bootstrap-server: "localhost:9092"
+
 eureka:
   client:
     service-url:
