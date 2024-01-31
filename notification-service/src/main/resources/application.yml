@@ -17,7 +17,7 @@ spring:
         format_sql: 'true'
         dialect: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none
     show-sql: true
 
   security:
@@ -32,7 +32,7 @@ spring:
 
   liquibase:
     change-log: changelog.xml
-    enabled: false
+    enabled: true
 
 eureka:
   client:
