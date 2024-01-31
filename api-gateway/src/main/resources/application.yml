@@ -35,6 +35,11 @@ spring:
           predicates:
             - Path=/api/order/**
 
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/api/notification/**
+
       discovery:
         locator:
           enabled: true
@@ -56,3 +61,5 @@ springdoc:
         url: /user-service/v3/api-docs
       - name: order
         url: /order-service/v3/api-docs
+      - name: notification
+        url: /notification-service/v3/api-docs
