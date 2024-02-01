@@ -4,7 +4,8 @@ import huberts.spring.order.adapter.in.web.resource.OrderRequest;
 import huberts.spring.order.adapter.out.feign.basket.BasketFeignClient;
 import huberts.spring.order.adapter.out.feign.basket.model.BasketDomainModel;
 import huberts.spring.order.domain.model.OrderDomainModel;
-import huberts.spring.order.domain.port.in.KafkaServicePort;
+import huberts.spring.order.domain.port.in.KafkaBasketServicePort;
+import huberts.spring.order.domain.port.in.KafkaNotificationServicePort;
 import huberts.spring.order.domain.port.in.OrderServicePort;
 import huberts.spring.order.domain.port.out.OrderJpaPort;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,8 @@ public class OrderService implements OrderServicePort {
     private final Logger LOGGER = LoggerFactory.getLogger(OrderService.class);
 
     private final OrderJpaPort orderJpaPort;
-    private final KafkaServicePort kafkaServicePort;
+    private final KafkaBasketServicePort kafkaBasketServicePort;
+    private final KafkaNotificationServicePort kafkaNotificationServicePort;
     private final BasketFeignClient basketFeignClient;
 
     @Override
@@ -39,8 +41,8 @@ public class OrderService implements OrderServicePort {
 
         OrderDomainModel orderSaved = orderJpaPort.saveOrder(order);
 
-        kafkaServicePort.sendBasketInactiveEvent(basket);
-        kafkaServicePort.sendNotificationMessage(basket);
+        kafkaBasketServicePort.sendBasketInactiveEvent(basket);
+        kafkaNotificationServicePort.sendOrderCreateNotificationEvent(order);
 
         LOGGER.info(">> OrderService: order created");
         return orderSaved;
