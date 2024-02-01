@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import huberts.spring.basket.domain.model.BasketDomainModel;
 import huberts.spring.basket.domain.model.BasketProductDomainModel;
 import huberts.spring.basket.domain.port.in.BasketServicePort;
+import huberts.spring.basket.domain.port.in.KafkaNotificationServicePort;
 import huberts.spring.basket.domain.port.in.KafkaProductServicePort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,23 +20,22 @@ import java.util.List;
 public class OrderListener {
 
     private final BasketServicePort basketServicePort;
-    private final KafkaProductServicePort kafkaServicePort;
+    private final KafkaProductServicePort kafkaProductServicePort;
 
     private final ObjectMapper objectMapper;
 
-    @KafkaListener(topics = "order.completed", groupId = "one")
-    public String listens(final String in) throws JsonProcessingException {
+    @KafkaListener(topics = "order.complete", groupId = "basket")
+    public void listens(final String in) throws JsonProcessingException {
         log.info(">> OrderListener: kafka listener: order.completed invoked: {}", in);
         BasketDomainModel basket = objectMapper.readValue(in, BasketDomainModel.class);
 
         List<Long> productsId = basket.getBasketProducts().stream()
-                        .map(BasketProductDomainModel::getProductId)
-                                .toList();
+                .map(BasketProductDomainModel::getProductId)
+                .toList();
         log.info(">> OrderListener: products id to be send: {}", productsId);
 
-        kafkaServicePort.sendProductSoldEvent(productsId);
+        kafkaProductServicePort.sendProductSoldEvent(productsId);
 
         basketServicePort.setBasketInactive(basket);
-        return in;
     }
 }
