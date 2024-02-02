@@ -10,8 +10,16 @@ public class KafkaTopicConfig {
 
     @Bean
     public NewTopic orderCompletedTopic() {
-        return TopicBuilder.name("order.completed")
-                .partitions(10)
+        return TopicBuilder.name("order.complete")
+                .partitions(1)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic orderNotificationTopic() {
+        return TopicBuilder.name("order.create.notification")
+                .partitions(1)
                 .replicas(1)
                 .build();
     }
