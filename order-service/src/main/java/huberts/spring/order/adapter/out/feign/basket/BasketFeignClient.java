@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public interface BasketFeignClient {
 
     @GetMapping(
-            value = "/details",
+            value = "/api/basket/details",
             consumes = "application/json",
             produces = "application/json")
     BasketDomainModel getBasketDetails();
