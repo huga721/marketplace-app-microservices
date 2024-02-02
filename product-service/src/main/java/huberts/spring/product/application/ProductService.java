@@ -3,6 +3,7 @@ package huberts.spring.product.application;
 import huberts.spring.product.adapter.in.web.resource.ProductRequest;
 import huberts.spring.product.domain.model.ProductDomainModel;
 import huberts.spring.product.domain.model.Status;
+import huberts.spring.product.domain.port.in.KafkaNotificationServicePort;
 import huberts.spring.product.domain.port.in.ProductServicePort;
 import huberts.spring.product.domain.port.out.ProductJpaPort;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ public class ProductService implements ProductServicePort {
     private final Logger LOGGER = LoggerFactory.getLogger(ProductService.class);
 
     private final ProductJpaPort productJpaPort;
+    private final KafkaNotificationServicePort kafkaNotificationServicePort;
 
     @Override
     public ProductDomainModel createProduct(ProductRequest productRequest, String keycloakId) {
@@ -35,6 +37,8 @@ public class ProductService implements ProductServicePort {
         product.setKeycloakId(keycloakId);
 
         ProductDomainModel productSaved = productJpaPort.saveProduct(product);
+
+        kafkaNotificationServicePort.sendProductCreatedNotificationEvent(productSaved);
 
         LOGGER.info(">> ProductService: new product saved: {}", productSaved);
         return productSaved;
@@ -55,9 +59,13 @@ public class ProductService implements ProductServicePort {
     @Override
     public ProductDomainModel getProductById(Long productId) {
         LOGGER.info(">> ProductService: getting product with id: {}", productId);
-        ProductDomainModel productDomainModel = productJpaPort.getProductById(productId);
-        LOGGER.info(">> ProductService: getting product: {}", productDomainModel);
-        return productDomainModel;
+        return productJpaPort.getProductById(productId);
+    }
+
+    @Override
+    public List<ProductDomainModel> getProductsByKeycloakId(String keycloakId) {
+        LOGGER.info(">> ProductService: getting active products with keycloak id: {}", keycloakId);
+        return productJpaPort.getActiveProductsByKeycloakId(keycloakId);
     }
 
     @Override
@@ -68,6 +76,9 @@ public class ProductService implements ProductServicePort {
                 .map(ProductDomainModel::markInactive)
                 .toList();
         List<ProductDomainModel> productsChanged = productJpaPort.saveProducts(products);
+
+        kafkaNotificationServicePort.sendProductInactiveNotificationEvent(productsChanged);
+
         LOGGER.info(">> ProductService: products saved: {}", productsChanged);
         return productsChanged;
     }
@@ -78,6 +89,7 @@ public class ProductService implements ProductServicePort {
         ProductDomainModel product = productJpaPort.getProductById(productId);
         product.update(productRequest);
 
+        kafkaNotificationServicePort.sendProductEditedNotificationEvent(product);
         return productJpaPort.saveProduct(product);
     }
 
@@ -93,6 +105,8 @@ public class ProductService implements ProductServicePort {
         LOGGER.info(">> ProductService: editing: {} product with id: {} keycloak id: {}", productRequest, productId, keycloakId);
         ProductDomainModel product = productJpaPort.getProductByIdAndKeycloakId(productId, keycloakId);
         product.update(productRequest);
+
+        kafkaNotificationServicePort.sendProductEditedNotificationEvent(product);
         return product;
     }
 
@@ -101,11 +115,7 @@ public class ProductService implements ProductServicePort {
         LOGGER.info(">> ProductService: deleting product with id: {} keycloak id: {}", productId, keycloakId);
         ProductDomainModel product = productJpaPort.getProductByIdAndKeycloakId(productId, keycloakId);
         productJpaPort.deleteProduct(product);
-    }
 
-    @Override
-    public List<ProductDomainModel> getProductsByKeycloakId(String keycloakId) {
-        LOGGER.info(">> ProductService: getting active products with keycloak id: {}", keycloakId);
-        return productJpaPort.getActiveProductsByKeycloakId(keycloakId);
+        kafkaNotificationServicePort.sendProductDeletedNotificationEvent(product);
     }
 }
