@@ -11,6 +11,7 @@ import huberts.spring.basket.application.exception.BasketNotFoundException;
 import huberts.spring.basket.domain.model.BasketDomainModel;
 import huberts.spring.basket.domain.model.BasketProductDomainModel;
 import huberts.spring.basket.domain.port.in.BasketServicePort;
+import huberts.spring.basket.domain.port.in.KafkaNotificationServicePort;
 import huberts.spring.basket.domain.port.out.BasketJpaPort;
 import huberts.spring.basket.domain.port.out.BasketProductJpaPort;
 import jakarta.transaction.Transactional;
@@ -26,9 +27,9 @@ import java.util.List;
 public class BasketService implements BasketServicePort {
 
     private final Logger LOGGER = LoggerFactory.getLogger(BasketService.class);
-
     private final BasketJpaPort basketJpaPort;
     private final BasketProductJpaPort basketProductJpaPort;
+    private final KafkaNotificationServicePort kafkaNotificationServicePort;
     private final ProductFeignClient productFeignClient;
 
     @Transactional
@@ -41,6 +42,7 @@ public class BasketService implements BasketServicePort {
             basket = new BasketDomainModel();
             basket.setKeycloakId(keycloakId);
             basket = basketJpaPort.saveBasket(basket);
+            kafkaNotificationServicePort.sendBasketCreateNotificationEvent(basket);
             LOGGER.info(">> BasketService: created new basket: {}", basket);
         }
 
@@ -72,6 +74,7 @@ public class BasketService implements BasketServicePort {
 
         basket.addProduct(basketProduct);
         BasketDomainModel basketSaved = basketJpaPort.saveBasket(basket);
+        kafkaNotificationServicePort.sendBasketAddProductNotificationEvent(basketSaved);
         LOGGER.info(">> BasketService: added product {} to a basket {}", basketProduct, basket);
         return basketSaved;
     }
@@ -111,6 +114,7 @@ public class BasketService implements BasketServicePort {
     public BasketDomainModel setBasketInactive(BasketDomainModel basketDomainModel) {
         LOGGER.info(">> BasketService: setting basket status as inactive");
         basketDomainModel.setInactiveStatus();
+        kafkaNotificationServicePort.sendBasketInactiveNotificationEvent(basketDomainModel);
         return basketJpaPort.saveBasket(basketDomainModel);
     }
 
@@ -128,6 +132,8 @@ public class BasketService implements BasketServicePort {
             throw new BasketNotFoundException(errorMessage);
         }
 
+        kafkaNotificationServicePort.sendBasketRemoveProductNotificationEvent(basket);
+
         BasketProductDomainModel product = basket.getBasketProducts()
                 .stream()
                 .filter(basketProduct -> basketProduct.getProductId().equals(productId))
@@ -139,7 +145,6 @@ public class BasketService implements BasketServicePort {
                 });
 
         basket.removeProduct(product);
-
 
         basketJpaPort.saveBasket(basket);
         basketProductJpaPort.deleteBasketProduct(product, basket);
