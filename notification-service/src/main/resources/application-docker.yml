@@ -1,0 +1,53 @@
+server:
+  forward-headers-strategy: framework
+  port: 0
+
+spring:
+  application:
+    name: notification-service
+
+  datasource:
+    username: 'admin'
+    password: 'admin'
+    url: jdbc:postgresql://postgres:5432/notification
+
+  jpa:
+    properties:
+      hibernate:
+        format_sql: 'true'
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8181/realms/marketplace-app-realm
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+
+  kafka:
+    bootstrap-server: "localhost:9092"
+
+  liquibase:
+    change-log: changelog.xml
+    enabled: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-service:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true
+
+keycloak:
+  realm: marketplace-app-realm
+  ssl-required: external
+  resource:
+
+jwt:
+  auth:
+    converter:
+      principle-attribute: "preferred_username"
+      resource-id: "marketplace-app"
