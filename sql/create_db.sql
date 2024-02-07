@@ -22,7 +22,7 @@ CREATE DATABASE basket
     CONNECTION LIMIT = -1
     IS_TEMPLATE = False;
 
-CREATE DATABASE orders
+CREATE DATABASE order
     WITH
     OWNER = admin
     ENCODING = 'UTF8'
@@ -31,6 +31,14 @@ CREATE DATABASE orders
     IS_TEMPLATE = False;
 
 CREATE DATABASE notification
+    WITH
+    OWNER = admin
+    ENCODING = 'UTF8'
+    LOCALE_PROVIDER = 'libc'
+    CONNECTION LIMIT = -1
+    IS_TEMPLATE = False;
+
+CREATE DATABASE keycloak
     WITH
     OWNER = admin
     ENCODING = 'UTF8'
