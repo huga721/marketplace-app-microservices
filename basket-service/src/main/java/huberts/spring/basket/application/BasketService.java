@@ -64,16 +64,15 @@ public class BasketService implements BasketServicePort {
             LOGGER.warn("An exception occurred!", new ProductInBasketException(errorMessage));
             throw new ProductInBasketException(errorMessage);
         }
-
         BasketProductDomainModel basketProduct = new BasketProductDomainModel();
         basketProduct.setBasketId(basket.getId());
         basketProduct.setProductValue(product.getPrice());
         basketProduct.setProductId(productId);
-
         basketProduct = basketProductJpaPort.saveBasketProduct(basketProduct, basket);
 
         basket.addProduct(basketProduct);
         BasketDomainModel basketSaved = basketJpaPort.saveBasket(basket);
+
         kafkaNotificationServicePort.sendBasketAddProductNotificationEvent(basketSaved);
         LOGGER.info(">> BasketService: added product {} to a basket {}", basketProduct, basket);
         return basketSaved;

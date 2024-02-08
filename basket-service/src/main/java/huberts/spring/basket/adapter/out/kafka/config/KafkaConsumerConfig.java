@@ -19,7 +19,7 @@ public class KafkaConsumerConfig {
 
     private final String BOOTSTRAP_SERVER;
 
-    public KafkaConsumerConfig(@Value("${spring.kafka.bootstrap-server}") String bootstrapServer) {
+    public KafkaConsumerConfig(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServer) {
         this.BOOTSTRAP_SERVER = bootstrapServer;
     }
 
