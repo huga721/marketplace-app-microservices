@@ -1,6 +1,6 @@
 server:
   forward-headers-strategy: framework
-  port: 0
+  port: 8085
 
 spring:
   application:
@@ -24,11 +24,11 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://keycloak:8181/realms/marketplace-app-realm
+          issuer-uri: http://keycloak:8080/realms/marketplace-app-realm
           jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
 
   kafka:
-    bootstrap-server: "localhost:9092"
+    bootstrap-servers: "broker:29092"
 
   liquibase:
     change-log: changelog.xml
@@ -37,7 +37,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://discovery-service:8761/eureka
+      defaultZone: http://discovery-server:8761/eureka
     fetch-registry: true
     register-with-eureka: true
 

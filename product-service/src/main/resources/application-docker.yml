@@ -1,5 +1,5 @@
 server:
-  port: 0
+  port: 8082
   forward-headers-strategy: framework
 
 spring:
@@ -24,7 +24,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://keycloak:8181/realms/marketplace-app-realm
+          issuer-uri: http://keycloak:8080/realms/marketplace-app-realm
           jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
 
   liquibase:
@@ -32,7 +32,7 @@ spring:
     enabled: true
 
   kafka:
-    bootstrap-server: "broker:29092"
+    bootstrap-servers: "broker:29092"
 
 eureka:
   client:

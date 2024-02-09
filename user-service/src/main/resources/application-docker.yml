@@ -1,5 +1,5 @@
 server:
-  port: 8084
+  port: 8081
   forward-headers-strategy: framework
 
 spring:
@@ -9,7 +9,7 @@ spring:
   datasource:
     username: 'admin'
     password: 'admin'
-    url: jdbc:postgresql://postgres:5432/user
+    url: jdbc:postgresql://postgres:5432/users
 
   jpa:
     properties:
@@ -24,7 +24,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://keycloak:8181/realms/marketplace-app-realm
+          issuer-uri: http://keycloak:8080/realms/marketplace-app-realm
           jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
 
 
@@ -41,12 +41,12 @@ eureka:
 
 keycloak:
   realm: marketplace-app-realm
-  server-url: http://keycloak:8181
+  server-url: http://keycloak:8080
   username: admin
   password: password
   client-id: marketplace-app
   client-secret: TehmCIP2NYurYk1J2d8XfszkNYc9ujZg
-  ssl-required: external
+  ssl-required: none
   resource:
 
 jwt:
