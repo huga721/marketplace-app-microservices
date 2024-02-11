@@ -1,5 +1,5 @@
 server:
-  port: 8084
+  port: 8081
   forward-headers-strategy: framework
 
 spring:
@@ -7,9 +7,9 @@ spring:
     name: user-service
 
   datasource:
-    username: 'admin-user'
-    password: 'admin-user'
-    url: jdbc:postgresql://localhost:5435/user
+    username: 'admin'
+    password: 'admin'
+    url: jdbc:postgresql://localhost:5432/users
 
   jpa:
     properties:

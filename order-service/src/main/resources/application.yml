@@ -1,5 +1,5 @@
 server:
-  port: 0
+  port: 8084
   forward-headers-strategy: framework
 
 spring:
@@ -7,9 +7,9 @@ spring:
     name: order-service
 
   datasource:
-    username: 'admin-order'
-    password: 'admin-order'
-    url: jdbc:postgresql://localhost:5436/order
+    username: 'admin'
+    password: 'admin'
+    url: jdbc:postgresql://localhost:5432/orders
 
   jpa:
     properties:
@@ -28,8 +28,6 @@ spring:
           jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
 
   kafka:
-    consumer:
-      auto-offset-reset: latest
     bootstrap-servers: 'localhost:9092'
 
   liquibase:

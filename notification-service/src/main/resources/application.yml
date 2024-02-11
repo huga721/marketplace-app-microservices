@@ -1,15 +1,15 @@
 server:
   forward-headers-strategy: framework
-  port: 0
+  port: 8085
 
 spring:
   application:
     name: notification-service
 
   datasource:
-    username: 'admin-notification'
-    password: 'admin-notification'
-    url: jdbc:postgresql://localhost:5437/notification
+    username: 'admin'
+    password: 'admin'
+    url: jdbc:postgresql://localhost:5432/notification
 
   jpa:
     properties:
@@ -28,7 +28,7 @@ spring:
           jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
 
   kafka:
-    bootstrap-server: "localhost:9092"
+    bootstrap-servers: "localhost:9092"
 
   liquibase:
     change-log: changelog.xml
