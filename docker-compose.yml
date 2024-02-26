@@ -1,99 +1,26 @@
 services:
-
-  postgres-product:
-    container_name: postgres-product
+  postgres:
+    container_name: postgres
     image: postgres:15.4
     environment:
-      POSTGRES_USER: admin-product
-      POSTGRES_PASSWORD: admin-product
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: postgres
       PGDATA: /data/postgres
+      PGUSER: admin
     volumes:
-      - postgres-product:/data/postgres
+      - postgres:/data/postgres
+      - ./sql/create_db.sql:/docker-entrypoint-initdb.d/create_database.sql
     ports:
       - "5432:5432"
     networks:
+      - spring
       - postgres
-    restart: unless-stopped
-
-  postgres-basket:
-    container_name: postgres-basket
-    image: postgres:15.4
-    environment:
-      POSTGRES_USER: admin-basket
-      POSTGRES_PASSWORD: admin-basket
-      PGDATA: /data/postgres
-      PGPORT: 5433
-    volumes:
-      - postgres-basket:/data/postgres
-    ports:
-      - "5433:5433"
-    networks:
-      - postgres
-    restart: unless-stopped
-
-  postgres-keycloak:
-    container_name: postgres-keycloak
-    image: postgres:15.4
-    environment:
-      POSTGRES_USER: admin-keycloak
-      POSTGRES_PASSWORD: admin-password
-      PGDATA: /data/postgres
-      PGPORT: 5434
-      POSTGRES_DB: keycloak
-    volumes:
-      - postgres-keycloak:/data/postgres
-    ports:
-      - "5434:5434"
-    networks:
-      - postgres
-    restart: unless-stopped
-
-  postgres-user:
-    container_name: postgres-user
-    image: postgres
-    environment:
-      POSTGRES_USER: admin-user
-      POSTGRES_PASSWORD: admin-user
-      PGDATA: /data/postgres
-      PGPORT: 5435
-    volumes:
-      - postgres-user:/data/postgres
-    ports:
-      - "5435:5435"
-    networks:
-      - postgres
-    restart: unless-stopped
-
-  postgres-order:
-    container_name: postgres-order
-    image: postgres
-    environment:
-      POSTGRES_USER: admin-order
-      POSTGRES_PASSWORD: admin-order
-      PGDATA: /data/postgres
-      PGPORT: 5436
-    volumes:
-      - postgres-order:/data/postgres
-    ports:
-      - "5436:5436"
-    networks:
-      - postgres
-    restart: unless-stopped
-
-  postgres-notification:
-    container_name: postgres-notification
-    image: postgres
-    environment:
-      POSTGRES_USER: admin-notification
-      POSTGRES_PASSWORD: admin-notification
-      PGDATA: /data/postgres
-      PGPORT: 5437
-    volumes:
-      - postgres-notification:/data/postgres
-    ports:
-      - "5437:5437"
-    networks:
-      - postgres
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "admin"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     restart: unless-stopped
 
   pgadmin:
@@ -127,17 +54,20 @@ services:
       KC_HOSTNAME_STRICT_HTTPS: false
       KC_HTTP_ENABLED: true
       KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://postgres-keycloak:5434/keycloak
-      KC_DB_USERNAME: admin-keycloak
-      KC_DB_PASSWORD: admin-password
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: admin
+      KC_DB_PASSWORD: admin
     volumes:
       - ./keycloak/marketplace-realm.json:/tmp/export/marketplace-realm.json
     ports:
-      - "8181:8080"
+      - "8181:8180"
     depends_on:
-      - postgres-keycloak
+      postgres:
+        condition: service_healthy
     networks:
       - postgres
+      - spring
+    restart: on-failure
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
@@ -147,9 +77,12 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - spring
+      - postgres
 
   broker:
-    image: confluentinc/cp-kafka:7.0.1
+    image: confluentinc/cp-kafka:7.5.3
     container_name: broker
     ports:
       - "9092:9092"
@@ -159,22 +92,157 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://broker:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT_HOST://localhost:9092,PLAINTEXT://broker:29092
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    healthcheck:
+      test: ["CMD", "nc", "-vz", "localhost", "9092"]
+      start_period: 15s
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    networks:
+      - spring
+      - postgres
+
+  discovery-server:
+    image: hubertsz123/discovery-server:latest
+    container_name: discovery-server
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - spring
+    restart: on-failure
+
+  api-gateway:
+    image: hubertsz123/api-gateway:latest
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - discovery-server
+    networks:
+      - spring
+    restart: on-failure
+
+  user-service:
+    image: hubertsz123/user-service:latest
+    container_name: user-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      api-gateway:
+        condition: service_started
+      discovery-server:
+        condition: service_started
+      broker:
+        condition: service_healthy
+    networks:
+      - spring
+      - postgres
+    restart: on-failure
+
+  product-service:
+    image: hubertsz123/product-service:latest
+    container_name: product-service
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      api-gateway:
+        condition: service_started
+      discovery-server:
+        condition: service_started
+      broker:
+        condition: service_healthy
+    networks:
+      - spring
+      - postgres
+    restart: on-failure
+
+  basket-service:
+    image: hubertsz123/basket-service:latest
+    container_name: basket-service
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      api-gateway:
+        condition: service_started
+      discovery-server:
+        condition: service_started
+      broker:
+        condition: service_healthy
+    networks:
+      - spring
+      - postgres
+    restart: on-failure
+
+  order-service:
+    image: hubertsz123/order-service:latest
+    container_name: order-service
+    ports:
+      - "8084:8084"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      api-gateway:
+        condition: service_started
+      discovery-server:
+        condition: service_started
+      broker:
+        condition: service_healthy
+    networks:
+      - spring
+      - postgres
+    restart: on-failure
+
+  notification-service:
+    image: hubertsz123/notification-service:latest
+    container_name: notification-service
+    ports:
+      - "8085:8085"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      api-gateway:
+        condition: service_started
+      discovery-server:
+        condition: service_started
+      broker:
+        condition: service_healthy
+    networks:
+      - spring
+      - postgres
+    restart: on-failure
 
 networks:
   postgres:
     driver: bridge
+  spring:
+    driver: bridge
 
 volumes:
-  postgres-product:
-  postgres-basket:
-  postgres-keycloak:
-  postgres-user:
-  postgres-order:
-  postgres-notification:
+  postgres:
   pgadmin:
