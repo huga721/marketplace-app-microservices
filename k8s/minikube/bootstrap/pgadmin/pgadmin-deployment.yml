@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgadmin
+  labels:
+    app: pgadmin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgadmin
+  template:
+    metadata:
+      name: pgadmin
+      labels:
+        app: pgadmin
+    spec:
+      containers:
+        - name: pgadmin
+          image: dpage/pgadmin4
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: pgadmin-config
+          ports:
+            - containerPort: 80
+              name: pgadmin-port
+          volumeMounts:
+            - mountPath: /var/lib/pgadmin
+              name: pgadmin-volume
+      volumes:
+        - name: pgadmin-volume
+          persistentVolumeClaim:
+            claimName: pgadmin-pvc
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pgadmin-pv
+  labels:
+    type: local
+    app: pgadmin
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pgadmin-pvc
+  labels:
+    app: pgadmin
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgadmin
+spec:
+  selector:
+    app: pgadmin
+  ports:
+    - port: 80
+      targetPort: 80
+  type: NodePort

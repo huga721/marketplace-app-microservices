@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pgadmin-config
+data:
+  PGADMIN_DEFAULT_EMAIL: "admin@gmail.com"
+  PGADMIN_DEFAULT_PASSWORD: "admin"
+  PGADMIN_CONFIG_SERVER_MODE: 'False'
+  PGADMIN_PORT: "80"
