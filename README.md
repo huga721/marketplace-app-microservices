@@ -11,7 +11,7 @@ Not implemented yet, the project is currently in maintenance.
 
 # 🛠️ Stack
 The Forum App REST API is built on the following cutting-edge technologies:
-- Java 17
+- Java 21
 - Maven
 - PostgreSQL
 - SpringDoc OpenApi
