@@ -1,0 +1,53 @@
+server:
+  port: 8084
+  forward-headers-strategy: framework
+
+spring:
+  application:
+    name: order-service
+
+  datasource:
+    username: 'admin'
+    password: 'admin'
+    url: jdbc:postgresql://postgres:5432/orders
+
+  jpa:
+    properties:
+      hibernate:
+        format_sql: 'true'
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8080/realms/marketplace-app-realm
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+
+  kafka:
+    bootstrap-servers: "broker:29092"
+
+  liquibase:
+    change-log: changelog.xml
+    enabled: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true
+    enabled: false
+
+jwt:
+  auth:
+    converter:
+      principle-attribute: "preferred_username"
+      resource-id: "marketplace-app"
+
+feign:
+  basket:
+    url: basket

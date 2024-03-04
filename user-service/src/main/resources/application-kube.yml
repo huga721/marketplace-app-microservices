@@ -1,0 +1,56 @@
+server:
+  port: 8081
+  forward-headers-strategy: framework
+
+spring:
+  application:
+    name: user-service
+
+  datasource:
+    username: 'admin'
+    password: 'admin'
+    url: jdbc:postgresql://postgres:5432/users
+
+  jpa:
+    properties:
+      hibernate:
+        format_sql: 'true'
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8080/realms/marketplace-app-realm
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+
+
+  liquibase:
+    change-log: changelog.xml
+    enabled: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true
+    enabled: false
+
+keycloak:
+  realm: marketplace-app-realm
+  server-url: http://keycloak:8080
+  username: admin
+  password: password
+  client-id: marketplace-app
+  client-secret: TehmCIP2NYurYk1J2d8XfszkNYc9ujZg
+  ssl-required: none
+
+jwt:
+  auth:
+    converter:
+      principle-attribute: "preferred_username"
+      resource-id: "marketplace-app"
