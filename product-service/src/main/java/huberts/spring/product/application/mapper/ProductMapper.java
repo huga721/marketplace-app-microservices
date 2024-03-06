@@ -1,14 +1,15 @@
-package huberts.spring.product.adapter.out.persistance.mapper;
+package huberts.spring.product.application.mapper;
 
 import huberts.spring.product.adapter.out.persistance.entity.ProductEntity;
 import huberts.spring.product.domain.model.ProductDomainModel;
+import org.mapstruct.Builder;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
-public interface ProductJpaMapper {
+@Mapper(builder = @Builder(disableBuilder = true))
+public interface ProductMapper {
 
-    ProductJpaMapper PRODUCT_JPA_MAPPER = Mappers.getMapper(ProductJpaMapper.class);
+    ProductMapper PRODUCT_MAPPER = Mappers.getMapper(ProductMapper.class);
 
     ProductDomainModel toDomainModel(ProductEntity productEntity);
 
